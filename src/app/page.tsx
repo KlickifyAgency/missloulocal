@@ -34,9 +34,9 @@ export default function HomePage() {
           <div style={{ width: '36px', height: '36px', backgroundColor: '#e94560', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <MapPin size={20} color='white' strokeWidth={2.5} />
           </div>
-          <div style={{ lineHeight: 1 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
             <div style={{ fontFamily: 'var(--font-display)', fontSize: '22px', color: 'white', lineHeight: 1 }}>Miss<span style={{ color: '#e94560' }}>Lou</span></div>
-            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', letterSpacing: '3px', textTransform: 'uppercase', marginTop: '2px' }}>Local</div>
+            <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.45)', letterSpacing: '2.5px', textTransform: 'uppercase', marginTop: '3px' }}>Local Directory</div>
           </div>
         </div>
         <div style={{ textAlign: 'right' }}>
