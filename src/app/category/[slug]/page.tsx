@@ -159,7 +159,7 @@ export default function CategoryPage() {
       </div>
 
       <div style={{ padding: '8px 20px 4px', textAlign: 'center' }}>
-        <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>Missing a business? <a href='mailto:support@klickifyagency.com' style={{ color: '#e94560', fontWeight: 600, textDecoration: 'none' }}>Contact us to get listed</a></p>
+        <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>Missing a business? <a href='mailto:info@missloulocal.com' style={{ color: '#e94560', fontWeight: 600, textDecoration: 'none' }}>Contact us to get listed</a></p>
       </div>
       <div style={{ padding: '4px 20px 16px', textAlign: 'center' }}>
         <div style={{ fontSize: '12px', color: '#94a3b8' }}>Powered by <a href='https://klickifyagency.com' target='_blank' rel='noopener noreferrer' style={{ color: '#e94560', fontWeight: 600, textDecoration: 'none', display: 'inline', minHeight: 0, height: 'auto' }}>Klickify Agency</a></div>
