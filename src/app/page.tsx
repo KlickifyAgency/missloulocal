@@ -48,8 +48,8 @@ export default function HomePage() {
       <div style={{ backgroundColor: '#0f3460', padding: '28px 20px 36px', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: '-60px', right: '-60px', width: '200px', height: '200px', backgroundColor: '#e94560', borderRadius: '50%', opacity: 0.08 }} />
         <div style={{ position: 'absolute', bottom: '-40px', left: '-30px', width: '150px', height: '150px', backgroundColor: '#fbbf24', borderRadius: '50%', opacity: 0.06 }} />
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '34px', color: 'white', lineHeight: 1.15, margin: '0 0 8px', position: 'relative' }}>Find Local<br />Services</h1>
-        <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.55)', margin: '0 0 24px', position: 'relative' }}>Natchez & the Miss-Lou Area</p>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '34px', color: 'white', lineHeight: 1.15, margin: '0 0 8px', position: 'relative', textAlign: 'center', width: '100%' }}>Find Local Services</h1>
+        <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.55)', margin: '0 0 24px', position: 'relative', textAlign: 'center', width: '100%' }}>Natchez & the Miss-Lou Area</p>
         <Link href='/search' style={{ display: 'flex', alignItems: 'center', gap: '12px', backgroundColor: 'white', borderRadius: '16px', padding: '0 20px', height: '60px', color: '#94a3b8', fontSize: '17px', width: '100%', minHeight: 0, position: 'relative', textDecoration: 'none' }}>
           <Search size={20} strokeWidth={2} color='#94a3b8' style={{ flexShrink: 0 }} />
           <span>Search businesses...</span>
