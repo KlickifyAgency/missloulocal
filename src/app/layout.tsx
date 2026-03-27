@@ -3,6 +3,7 @@ import { DM_Sans, DM_Serif_Display } from 'next/font/google'
 import './globals.css'
 import InstallBanner from '@/components/pwa/InstallBanner'
 import RegisterSW from '@/components/pwa/RegisterSW'
+import { Analytics } from '@vercel/analytics/react'
 
 const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-sans' })
 const dmSerifDisplay = DM_Serif_Display({ subsets: ['latin'], weight: '400', variable: '--font-display' })
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {children}
         <InstallBanner />
         <RegisterSW />
+        <Analytics />
       </body>
     </html>
   )
