@@ -1,37 +1,39 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { Download, X, Share } from 'lucide-react'
+import { Download, X } from 'lucide-react'
 
 export default function InstallBanner() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
   const [showBanner, setShowBanner] = useState(false)
-  const [isIOS, setIsIOS] = useState(false)
-  const [isAndroid, setIsAndroid] = useState(false)
+  const [browser, setBrowser] = useState('')
   const [isStandalone, setIsStandalone] = useState(false)
 
   useEffect(() => {
-    const ios = /iPad|iPhone|iPod/.test(navigator.userAgent)
-    const android = /Android/.test(navigator.userAgent)
     const standalone = window.matchMedia('(display-mode: standalone)').matches
     const wasDismissed = localStorage.getItem('pwa-dismissed') === 'true'
-
-    setIsIOS(ios)
-    setIsAndroid(android)
     setIsStandalone(standalone)
-
     if (standalone || wasDismissed) return
 
-    if (ios) {
-      setTimeout(() => setShowBanner(true), 4000)
-      return
-    }
+    const ua = navigator.userAgent
+    const isIOS = /iPad|iPhone|iPod/.test(ua)
+    const isAndroid = /Android/.test(ua)
+    const isChrome = /CriOS/.test(ua) || (/Chrome/.test(ua) && !/Edg/.test(ua))
+    const isSafari = /Safari/.test(ua) && !/Chrome/.test(ua) && !/CriOS/.test(ua)
+    const isFirefox = /FxiOS/.test(ua) || /Firefox/.test(ua)
+
+    if (isIOS && isChrome) setBrowser('ios-chrome')
+    else if (isIOS && isSafari) setBrowser('ios-safari')
+    else if (isIOS && isFirefox) setBrowser('ios-firefox')
+    else if (isAndroid) setBrowser('android')
+    else setBrowser('desktop')
 
     const handler = (e: any) => {
       e.preventDefault()
       setDeferredPrompt(e)
-      setTimeout(() => setShowBanner(true), 4000)
     }
     window.addEventListener('beforeinstallprompt', handler)
+
+    setTimeout(() => setShowBanner(true), 4000)
     return () => window.removeEventListener('beforeinstallprompt', handler)
   }, [])
 
@@ -50,6 +52,43 @@ export default function InstallBanner() {
 
   if (!showBanner || isStandalone) return null
 
+  const steps: Record<string, { title: string; steps: string[] }> = {
+    'ios-chrome': {
+      title: 'iPhone — Chrome',
+      steps: [
+        'Tap the Share button (box with arrow) at the bottom of Chrome',
+        'Scroll down and tap "Add to Home Screen"',
+        'Tap "Add" in the top right corner'
+      ]
+    },
+    'ios-safari': {
+      title: 'iPhone — Safari',
+      steps: [
+        'Tap the Share button at the bottom of Safari',
+        'Tap "Add to Home Screen"',
+        'Tap "Add" in the top right corner'
+      ]
+    },
+    'ios-firefox': {
+      title: 'iPhone — Firefox',
+      steps: [
+        'Tap the 3 lines menu at the bottom right',
+        'Tap "Share"',
+        'Tap "Add to Home Screen"'
+      ]
+    },
+    'android': {
+      title: 'Android — Chrome',
+      steps: [
+        'Tap the 3 dots menu at the top right',
+        'Tap "Add to Home Screen"',
+        'Tap "Add" to confirm'
+      ]
+    }
+  }
+
+  const instruction = steps[browser]
+
   return (
     <div style={{ position: 'fixed', bottom: '80px', left: '16px', right: '16px', backgroundColor: '#0f3460', borderRadius: '20px', padding: '16px 20px', zIndex: 100, boxShadow: '0 8px 32px rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', animation: 'slideUp 0.4s ease-out' }}>
       <style>{'@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}'}</style>
@@ -66,48 +105,24 @@ export default function InstallBanner() {
         </div>
       </div>
 
-      {isIOS && (
-        <div style={{ backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '12px', padding: '12px 14px' }}>
-          <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700 }}>iPhone / Safari</p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-            <div style={{ width: '24px', height: '24px', backgroundColor: '#e94560', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <span style={{ color: 'white', fontSize: '12px', fontWeight: 700 }}>1</span>
-            </div>
-            <span style={{ fontSize: '14px', color: 'white' }}>Tap <strong>Share</strong> button at bottom of Safari</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{ width: '24px', height: '24px', backgroundColor: '#e94560', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <span style={{ color: 'white', fontSize: '12px', fontWeight: 700 }}>2</span>
-            </div>
-            <span style={{ fontSize: '14px', color: 'white' }}>Tap <strong>"Add to Home Screen"</strong></span>
-          </div>
-        </div>
-      )}
-
-      {isAndroid && !deferredPrompt && (
-        <div style={{ backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '12px', padding: '12px 14px' }}>
-          <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700 }}>Android / Chrome</p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-            <div style={{ width: '24px', height: '24px', backgroundColor: '#e94560', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <span style={{ color: 'white', fontSize: '12px', fontWeight: 700 }}>1</span>
-            </div>
-            <span style={{ fontSize: '14px', color: 'white' }}>Tap the <strong>3 dots menu</strong> (top right)</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{ width: '24px', height: '24px', backgroundColor: '#e94560', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <span style={{ color: 'white', fontSize: '12px', fontWeight: 700 }}>2</span>
-            </div>
-            <span style={{ fontSize: '14px', color: 'white' }}>Tap <strong>"Add to Home Screen"</strong></span>
-          </div>
-        </div>
-      )}
-
-      {deferredPrompt && (
+      {deferredPrompt ? (
         <button onClick={install} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', backgroundColor: '#e94560', borderRadius: '14px', height: '52px', minHeight: 0, color: 'white', fontSize: '16px', fontWeight: 700, border: 'none', cursor: 'pointer', width: '100%', boxShadow: '0 4px 16px rgba(233,69,96,0.4)' }}>
           <Download size={18} strokeWidth={2.5} />
           Install App — It is Free
         </button>
-      )}
+      ) : instruction ? (
+        <div style={{ backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '12px', padding: '12px 14px' }}>
+          <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', margin: '0 0 10px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700 }}>{instruction.title}</p>
+          {instruction.steps.map((step, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: i < instruction.steps.length - 1 ? '8px' : 0 }}>
+              <div style={{ width: '22px', height: '22px', backgroundColor: '#e94560', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: '1px' }}>
+                <span style={{ color: 'white', fontSize: '11px', fontWeight: 700 }}>{i + 1}</span>
+              </div>
+              <span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.9)', lineHeight: 1.4 }}>{step}</span>
+            </div>
+          ))}
+        </div>
+      ) : null}
     </div>
   )
 }
