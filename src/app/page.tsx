@@ -54,7 +54,7 @@ export default function HomePage() {
           <Search size={20} strokeWidth={2} color='#94a3b8' style={{ flexShrink: 0 }} />
           <span>Search businesses...</span>
         </Link>
-        <div style={{ display: 'flex', gap: '12px', marginTop: '16px', position: 'relative' }}>
+        <div style={{ display: 'flex', gap: '12px', marginTop: '16px', position: 'relative', justifyContent: 'center', width: '100%' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <div style={{ width: '6px', height: '6px', backgroundColor: '#4ade80', borderRadius: '50%' }} />
             <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}>867+ businesses</span>
@@ -88,7 +88,7 @@ export default function HomePage() {
       </div>
 
       <div style={{ padding: '24px 20px 0' }}>
-        <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#0f172a', margin: '0 0 16px' }}>Browse by Category</h2>
+        <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#0f172a', margin: '0 0 16px', textAlign: 'center' }}>Browse by Category</h2>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
           {categories.map(({ name, slug, icon: Icon, color, bg }) => slug === 'walking-downtown' ? (
             <Link key={slug} href={'/category/' + slug} style={{ gridColumn: '1 / -1', background: 'linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%)', borderRadius: '20px', padding: '20px', display: 'flex', alignItems: 'center', gap: '16px', textDecoration: 'none', minHeight: 0, height: 'auto', boxShadow: '0 8px 24px rgba(30,64,175,0.35)', position: 'relative', overflow: 'hidden', animation: 'pulse-blue 2s ease-in-out infinite' }}>
