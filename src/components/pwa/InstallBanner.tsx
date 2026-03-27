@@ -6,29 +6,30 @@ export default function InstallBanner() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
   const [showBanner, setShowBanner] = useState(false)
   const [isIOS, setIsIOS] = useState(false)
+  const [isAndroid, setIsAndroid] = useState(false)
   const [isStandalone, setIsStandalone] = useState(false)
-  const [dismissed, setDismissed] = useState(false)
 
   useEffect(() => {
     const ios = /iPad|iPhone|iPod/.test(navigator.userAgent)
+    const android = /Android/.test(navigator.userAgent)
     const standalone = window.matchMedia('(display-mode: standalone)').matches
     const wasDismissed = localStorage.getItem('pwa-dismissed') === 'true'
-    
+
     setIsIOS(ios)
+    setIsAndroid(android)
     setIsStandalone(standalone)
-    setDismissed(wasDismissed)
 
     if (standalone || wasDismissed) return
 
     if (ios) {
-      setTimeout(() => setShowBanner(true), 3000)
+      setTimeout(() => setShowBanner(true), 4000)
       return
     }
 
     const handler = (e: any) => {
       e.preventDefault()
       setDeferredPrompt(e)
-      setTimeout(() => setShowBanner(true), 3000)
+      setTimeout(() => setShowBanner(true), 4000)
     }
     window.addEventListener('beforeinstallprompt', handler)
     return () => window.removeEventListener('beforeinstallprompt', handler)
@@ -37,7 +38,6 @@ export default function InstallBanner() {
   function dismiss() {
     setShowBanner(false)
     localStorage.setItem('pwa-dismissed', 'true')
-    setDismissed(true)
   }
 
   async function install() {
@@ -48,37 +48,64 @@ export default function InstallBanner() {
     setDeferredPrompt(null)
   }
 
-  if (!showBanner || isStandalone || dismissed) return null
+  if (!showBanner || isStandalone) return null
 
   return (
     <div style={{ position: 'fixed', bottom: '80px', left: '16px', right: '16px', backgroundColor: '#0f3460', borderRadius: '20px', padding: '16px 20px', zIndex: 100, boxShadow: '0 8px 32px rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', animation: 'slideUp 0.4s ease-out' }}>
       <style>{'@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}'}</style>
-      
-      <button onClick={dismiss} style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', minHeight: 0 }}>
+
+      <button onClick={dismiss} style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '50%', width: '28px', height: '28px', minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
         <X size={14} color='white' />
       </button>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '12px' }}>
-        <div style={{ width: '48px', height: '48px', backgroundColor: '#e94560', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          <img src='/icon-192x192.png' style={{ width: '40px', height: '40px', borderRadius: '8px' }} alt='MissLouLocal' />
-        </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '14px' }}>
+        <img src='/icon-192x192.png' style={{ width: '48px', height: '48px', borderRadius: '12px', flexShrink: 0 }} alt='MissLouLocal' />
         <div>
-          <div style={{ fontSize: '16px', fontWeight: 700, color: 'white' }}>Add to Home Screen</div>
-          <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}>Get the full app experience — no App Store needed</div>
+          <div style={{ fontSize: '16px', fontWeight: 700, color: 'white', marginBottom: '2px' }}>Add to Home Screen</div>
+          <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}>Free app — no App Store needed</div>
         </div>
       </div>
 
-      {isIOS ? (
-        <div style={{ backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '12px', padding: '12px', display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-          <Share size={18} color='#e94560' strokeWidth={2} style={{ flexShrink: 0, marginTop: '2px' }} />
-          <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.8)', margin: 0, lineHeight: 1.5 }}>
-            Tap the <strong style={{ color: 'white' }}>Share</strong> button in Safari, then tap <strong style={{ color: 'white' }}>"Add to Home Screen"</strong>
-          </p>
+      {isIOS && (
+        <div style={{ backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '12px', padding: '12px 14px' }}>
+          <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700 }}>iPhone / Safari</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+            <div style={{ width: '24px', height: '24px', backgroundColor: '#e94560', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <span style={{ color: 'white', fontSize: '12px', fontWeight: 700 }}>1</span>
+            </div>
+            <span style={{ fontSize: '14px', color: 'white' }}>Tap <strong>Share</strong> button at bottom of Safari</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ width: '24px', height: '24px', backgroundColor: '#e94560', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <span style={{ color: 'white', fontSize: '12px', fontWeight: 700 }}>2</span>
+            </div>
+            <span style={{ fontSize: '14px', color: 'white' }}>Tap <strong>"Add to Home Screen"</strong></span>
+          </div>
         </div>
-      ) : (
-        <button onClick={install} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', backgroundColor: '#e94560', borderRadius: '14px', height: '48px', minHeight: 0, color: 'white', fontSize: '16px', fontWeight: 700, border: 'none', cursor: 'pointer', width: '100%', boxShadow: '0 4px 16px rgba(233,69,96,0.4)' }}>
+      )}
+
+      {isAndroid && !deferredPrompt && (
+        <div style={{ backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '12px', padding: '12px 14px' }}>
+          <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700 }}>Android / Chrome</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+            <div style={{ width: '24px', height: '24px', backgroundColor: '#e94560', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <span style={{ color: 'white', fontSize: '12px', fontWeight: 700 }}>1</span>
+            </div>
+            <span style={{ fontSize: '14px', color: 'white' }}>Tap the <strong>3 dots menu</strong> (top right)</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ width: '24px', height: '24px', backgroundColor: '#e94560', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <span style={{ color: 'white', fontSize: '12px', fontWeight: 700 }}>2</span>
+            </div>
+            <span style={{ fontSize: '14px', color: 'white' }}>Tap <strong>"Add to Home Screen"</strong></span>
+          </div>
+        </div>
+      )}
+
+      {deferredPrompt && (
+        <button onClick={install} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', backgroundColor: '#e94560', borderRadius: '14px', height: '52px', minHeight: 0, color: 'white', fontSize: '16px', fontWeight: 700, border: 'none', cursor: 'pointer', width: '100%', boxShadow: '0 4px 16px rgba(233,69,96,0.4)' }}>
           <Download size={18} strokeWidth={2.5} />
-          Install App — It's Free
+          Install App — It is Free
         </button>
       )}
     </div>
