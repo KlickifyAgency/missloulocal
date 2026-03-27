@@ -148,7 +148,7 @@ export default function EventsPage() {
 
         <div style={{ backgroundColor: '#eff6ff', borderRadius: '16px', padding: '16px', border: '1px solid #bfdbfe', marginTop: '8px' }}>
           <p style={{ fontSize: '14px', fontWeight: 700, color: '#1e40af', margin: '0 0 4px' }}>Have an event to share?</p>
-          <p style={{ fontSize: '13px', color: '#3b82f6', margin: 0 }}>Email us at <a href='mailto:support@klickifyagency.com' style={{ color: '#1e40af', fontWeight: 600 }}>events@missloulocal.com</a> and we will add it to the calendar.</p>
+          <p style={{ fontSize: '13px', color: '#3b82f6', margin: 0 }}>Email us at <a href='mailto:support@klickifyagency.com' style={{ color: '#1e40af', fontWeight: 600 }}>support@klickifyagency.com</a> and we will add it to the calendar.</p>
         </div>
       </div>
 
