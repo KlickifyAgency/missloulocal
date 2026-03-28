@@ -112,6 +112,18 @@ export default function HomePage() {
           ))}        </div>
       </div>
 
+      <div style={{ padding: '24px 20px 0' }}>
+        <Link href='/add-business' style={{ display: 'flex', alignItems: 'center', gap: '12px', backgroundColor: 'white', borderRadius: '16px', padding: '16px 20px', textDecoration: 'none', border: '2px dashed #cbd5e1', minHeight: 0, height: 'auto' }}>
+          <div style={{ width: '40px', height: '40px', backgroundColor: '#eff6ff', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <span style={{ fontSize: '22px', color: '#1e40af', fontWeight: 700 }}>+</span>
+          </div>
+          <div style={{ textAlign: 'left' }}>
+            <div style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a' }}>Add Your Business — Free</div>
+            <div style={{ fontSize: '13px', color: '#64748b' }}>Get listed in the Miss-Lou directory</div>
+          </div>
+        </Link>
+      </div>
+
       <div style={{ padding: '32px 20px 16px', textAlign: 'center' }}>
         <div style={{ fontSize: '12px', color: '#94a3b8' }}>Powered by <a href='https://klickifyagency.com' target='_blank' rel='noopener noreferrer' style={{ color: '#e94560', fontWeight: 600, textDecoration: 'none', display: 'inline', minHeight: 0, height: 'auto' }}>Klickify Agency</a></div>
       </div>
