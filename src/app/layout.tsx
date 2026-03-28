@@ -4,6 +4,7 @@ import './globals.css'
 import InstallBanner from '@/components/pwa/InstallBanner'
 import RegisterSW from '@/components/pwa/RegisterSW'
 import { Analytics } from '@vercel/analytics/react'
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-sans' })
 const dmSerifDisplay = DM_Serif_Display({ subsets: ['latin'], weight: '400', variable: '--font-display' })
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <InstallBanner />
         <RegisterSW />
         <Analytics />
+        <GoogleAnalytics gaId="G-X98NNEKHKV" />
       </body>
     </html>
   )
