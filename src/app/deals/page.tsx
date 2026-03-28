@@ -141,7 +141,7 @@ export default function DealsPage() {
 
         <div style={{ backgroundColor: '#fff7ed', borderRadius: '16px', padding: '16px', border: '1px solid #fed7aa', marginTop: '8px' }}>
           <p style={{ fontSize: '14px', fontWeight: 700, color: '#9a3412', margin: '0 0 4px' }}>Own a business? Get featured here!</p>
-          <p style={{ fontSize: '13px', color: '#ea580c', margin: '0 0 12px' }}>Reach thousands of locals and tourists with an exclusive deal. Starting at $9.99/month.</p>
+          <p style={{ fontSize: '13px', color: '#ea580c', margin: '0 0 12px' }}>Reach locals and tourists with an exclusive deal in the Miss-Lou directory. Contact us to learn more.</p>
           <a href='mailto:support@klickifyagency.com?subject=Today Deals - MissLouLocal' style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', backgroundColor: '#ea580c', borderRadius: '12px', height: '46px', minHeight: 0, color: 'white', fontSize: '15px', fontWeight: 700, textDecoration: 'none' }}>Contact Us to Get Listed</a>
         </div>
 
