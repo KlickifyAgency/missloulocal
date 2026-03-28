@@ -9,8 +9,8 @@ import Link from 'next/link'
 import BottomNav from '@/components/layout/BottomNav'
 
 const categories = [
-  { name: 'Farmers Market',        slug: 'farmers-market',    icon: ShoppingBasket,  color: '#65a30d', bg: '#f7fee7' },
   { name: 'Walking Downtown',     slug: 'walking-downtown',    icon: Footprints,      color: '#1e40af', bg: '#eff6ff' },
+  { name: 'Farmers Market',       slug: 'farmers-market',     icon: ShoppingBasket,  color: '#65a30d', bg: '#f7fee7' },
   { name: 'Restaurants & Food',   slug: 'restaurants-food',    icon: UtensilsCrossed, color: '#dc2626', bg: '#fef2f2' },
   { name: 'Medical & Health',     slug: 'medical-health',      icon: HeartPulse,      color: '#16a34a', bg: '#f0fdf4' },
   { name: 'Home Services',        slug: 'home-services',       icon: Wrench,          color: '#2563eb', bg: '#eff6ff' },
