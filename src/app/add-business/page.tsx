@@ -100,7 +100,7 @@ export default function AddBusinessPage() {
           <label style={labelStyle}>Business Name *</label>
           <div style={{ position: 'relative' }}>
             <Building2 size={18} color='#94a3b8' style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
-            <input value={form.name} onChange={e => update('name', e.target.value)} placeholder='e.g. Joe's Plumbing' style={{ ...inputStyle, paddingLeft: '44px' }} />
+            <input value={form.name} onChange={e => update('name', e.target.value)} placeholder='e.g. Joes Plumbing' style={{ ...inputStyle, paddingLeft: '44px' }} />
           </div>
         </div>
 

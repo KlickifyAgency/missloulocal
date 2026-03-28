@@ -154,7 +154,7 @@ export default function NearMePage() {
                   </div>
                 </div>
 
-                {biz.address && (
+                {biz.address && biz.latitude && biz.longitude && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <MapPin size={14} color='#94a3b8' strokeWidth={2} />
                     <span style={{ fontSize: '13px', color: '#64748b' }}>{biz.address}</span>
