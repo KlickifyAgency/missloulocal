@@ -11,7 +11,7 @@ export default function AdminPage() {
   const [businesses, setBusinesses] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
-  const [tab, setTab] = useState<'pending'|'active'>('pending')
+  const [tab, setTab] = useState<'pending'|'active'|'deals'>('pending')
 
   function login() {
     if (password === ADMIN_PASSWORD) { setAuthed(true); setError('') }
@@ -28,17 +28,19 @@ export default function AdminPage() {
 
   useEffect(() => { if (authed) loadBusinesses() }, [authed, tab])
 
-  async function approve(slug: string) {
-    setActionLoading(slug)
-    await fetch('/api/admin/businesses', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, action: 'approve' }) })
+  async function approve(slug: string, id?: string) {
+    setActionLoading(slug || id || '')
+    const body = id ? { id, action: 'approve', type: 'deal' } : { slug, action: 'approve' }
+    await fetch('/api/admin/businesses', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
     await loadBusinesses()
     setActionLoading(null)
   }
 
-  async function reject(slug: string) {
-    if (!confirm('Delete this business listing?')) return
-    setActionLoading(slug)
-    await fetch('/api/admin/businesses', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, action: 'reject' }) })
+  async function reject(slug: string, id?: string) {
+    if (!confirm('Delete this listing?')) return
+    setActionLoading(slug || id || '')
+    const body = id ? { id, action: 'reject', type: 'deal' } : { slug, action: 'reject' }
+    await fetch('/api/admin/businesses', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
     await loadBusinesses()
     setActionLoading(null)
   }
@@ -83,9 +85,9 @@ export default function AdminPage() {
       </header>
 
       <div style={{ display: 'flex', backgroundColor: 'white', borderBottom: '1px solid #f1f5f9' }}>
-        {(['pending', 'active'] as const).map(t => (
+        {(['pending', 'active', 'deals'] as const).map(t => (
           <button key={t} onClick={() => setTab(t)} style={{ flex: 1, height: '48px', minHeight: 0, border: 'none', borderBottom: tab === t ? '3px solid #e94560' : '3px solid transparent', backgroundColor: 'transparent', fontSize: '14px', fontWeight: 700, color: tab === t ? '#e94560' : '#64748b', cursor: 'pointer', textTransform: 'capitalize' }}>
-            {t === 'pending' ? 'Pending Approval' : 'Active Listings'}
+            t === 'pending' ? 'Pending Approval' : t === 'active' ? 'Active Listings' : 'Pending Deals'
           </button>
         ))}
       </div>
@@ -100,7 +102,34 @@ export default function AdminPage() {
           </div>
         )}
 
-        {businesses.map((biz: any) => (
+        {tab === 'deals' && businesses.map((deal: any) => (
+          <div key={deal.id} style={{ backgroundColor: 'white', borderRadius: '16px', padding: '16px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', border: '2px solid #fed7aa' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', backgroundColor: '#fff7ed', borderRadius: '20px', padding: '3px 10px', marginBottom: '10px' }}>
+              <Clock size={11} color='#92400e' />
+              <span style={{ fontSize: '11px', fontWeight: 700, color: '#92400e' }}>PENDING DEAL</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+              <h3 style={{ fontSize: '17px', fontWeight: 700, color: '#0f172a', margin: 0 }}>{deal.title}</h3>
+              <span style={{ backgroundColor: '#fff7ed', borderRadius: '10px', padding: '4px 10px', fontSize: '13px', fontWeight: 800, color: '#ea580c' }}>{deal.discount_text}</span>
+            </div>
+            {deal.description && <p style={{ fontSize: '13px', color: '#64748b', margin: '0 0 10px', lineHeight: 1.5 }}>{deal.description}</p>}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '14px' }}>
+              {deal.businesses?.name && <span style={{ fontSize: '14px', fontWeight: 600, color: '#374151' }}>Business: {deal.businesses.name}</span>}
+              {deal.expires_at && <span style={{ fontSize: '13px', color: '#94a3b8' }}>Expires: {new Date(deal.expires_at).toLocaleDateString()}</span>}
+              <span style={{ fontSize: '13px', color: '#94a3b8' }}>Submitted: {new Date(deal.created_at).toLocaleDateString()}</span>
+            </div>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button onClick={() => approve('', deal.id)} disabled={actionLoading === deal.id} style={{ flex: 1, height: '48px', minHeight: 0, backgroundColor: '#16a34a', border: 'none', borderRadius: '12px', color: 'white', fontSize: '15px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <CheckCircle size={18} /> {actionLoading === deal.id ? 'Approving...' : 'Approve Deal'}
+              </button>
+              <button onClick={() => reject('', deal.id)} disabled={actionLoading === deal.id} style={{ height: '48px', minHeight: 0, backgroundColor: '#fef2f2', border: '1px solid #fecaca', borderRadius: '12px', color: '#dc2626', fontSize: '15px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '0 20px' }}>
+                <XCircle size={18} /> Reject
+              </button>
+            </div>
+          </div>
+        ))}
+
+        {tab !== 'deals' && businesses.map((biz: any) => (
           <div key={biz.id} style={{ backgroundColor: 'white', borderRadius: '16px', padding: '16px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', border: biz.is_active ? '1px solid #f1f5f9' : '2px solid #fbbf24' }}>
             {!biz.is_active && (
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', backgroundColor: '#fef3c7', borderRadius: '20px', padding: '3px 10px', marginBottom: '10px' }}>

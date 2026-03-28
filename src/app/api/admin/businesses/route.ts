@@ -8,8 +8,18 @@ const supabase = createClient(
 
 export async function GET(request: NextRequest) {
   const tab = request.nextUrl.searchParams.get('tab') ?? 'pending'
-  const isActive = tab === 'active'
 
+  if (tab === 'deals') {
+    const { data, error } = await supabase
+      .from('deals')
+      .select('*, businesses(name, phone, address)')
+      .eq('is_active', false)
+      .order('created_at', { ascending: false })
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json(data ?? [])
+  }
+
+  const isActive = tab === 'active'
   const { data, error } = await supabase
     .from('businesses')
     .select('*, categories(slug)')
@@ -18,33 +28,31 @@ export async function GET(request: NextRequest) {
     .limit(100)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-
-  const businesses = (data ?? []).map((b: any) => ({
-    ...b,
-    category_slug: b.categories?.slug ?? ''
-  }))
-
-  return NextResponse.json(businesses)
+  return NextResponse.json((data ?? []).map((b: any) => ({ ...b, category_slug: b.categories?.slug ?? '' })))
 }
 
 export async function PATCH(request: NextRequest) {
-  const { slug, action } = await request.json()
+  const { slug, id, action, type } = await request.json()
+
+  if (type === 'deal') {
+    if (action === 'approve') {
+      const { error } = await supabase.from('deals').update({ is_active: true }).eq('id', id)
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+    if (action === 'reject') {
+      const { error } = await supabase.from('deals').delete().eq('id', id)
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+    return NextResponse.json({ success: true })
+  }
 
   if (action === 'approve') {
-    const { error } = await supabase
-      .from('businesses')
-      .update({ is_active: true })
-      .eq('slug', slug)
+    const { error } = await supabase.from('businesses').update({ is_active: true }).eq('slug', slug)
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   }
-
   if (action === 'reject') {
-    const { error } = await supabase
-      .from('businesses')
-      .delete()
-      .eq('slug', slug)
+    const { error } = await supabase.from('businesses').delete().eq('slug', slug)
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   }
-
   return NextResponse.json({ success: true })
 }
