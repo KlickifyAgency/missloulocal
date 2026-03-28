@@ -19,6 +19,7 @@ const categories = [
   { name: 'Tours & Attractions',  slug: 'tours-attractions' },
   { name: 'Pet Services',         slug: 'pet-services' },
   { name: 'Walking Downtown',     slug: 'walking-downtown' },
+  { name: 'Farmers Market',       slug: 'farmers-market' },
 ]
 
 export default function AddBusinessPage() {

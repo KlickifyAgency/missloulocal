@@ -3,13 +3,12 @@ import { Search, MapPin, Tag, CalendarDays } from 'lucide-react'
 import {
   Wrench, UtensilsCrossed, HeartPulse, Car, ShoppingBag,
   Scissors, Scale, Building2, Stethoscope, Church,
-  Palette, Compass, PawPrint, Footprints, ShoppingBasket
+  Palette, Compass, PawPrint, Footprints
 } from 'lucide-react'
 import Link from 'next/link'
 import BottomNav from '@/components/layout/BottomNav'
 
 const categories = [
-  { name: 'Farmers Market',        slug: 'farmers-market',    icon: ShoppingBasket,  color: '#65a30d', bg: '#f7fee7' },
   { name: 'Walking Downtown',     slug: 'walking-downtown',    icon: Footprints,      color: '#1e40af', bg: '#eff6ff' },
   { name: 'Restaurants & Food',   slug: 'restaurants-food',    icon: UtensilsCrossed, color: '#dc2626', bg: '#fef2f2' },
   { name: 'Medical & Health',     slug: 'medical-health',      icon: HeartPulse,      color: '#16a34a', bg: '#f0fdf4' },
@@ -35,9 +34,9 @@ export default function HomePage() {
           <div style={{ width: '36px', height: '36px', backgroundColor: '#e94560', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <MapPin size={20} color='white' strokeWidth={2.5} />
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
+          <div style={{ lineHeight: 1 }}>
             <div style={{ fontFamily: 'var(--font-display)', fontSize: '22px', color: 'white', lineHeight: 1 }}>Miss<span style={{ color: '#e94560' }}>Lou</span></div>
-            <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.45)', letterSpacing: '2.5px', textTransform: 'uppercase', marginTop: '3px' }}>Local Directory</div>
+            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', letterSpacing: '3px', textTransform: 'uppercase', marginTop: '2px' }}>Local</div>
           </div>
         </div>
         <div style={{ textAlign: 'right' }}>
@@ -49,16 +48,16 @@ export default function HomePage() {
       <div style={{ backgroundColor: '#0f3460', padding: '28px 20px 36px', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: '-60px', right: '-60px', width: '200px', height: '200px', backgroundColor: '#e94560', borderRadius: '50%', opacity: 0.08 }} />
         <div style={{ position: 'absolute', bottom: '-40px', left: '-30px', width: '150px', height: '150px', backgroundColor: '#fbbf24', borderRadius: '50%', opacity: 0.06 }} />
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '34px', color: 'white', lineHeight: 1.15, margin: '0 0 8px', position: 'relative', textAlign: 'center', width: '100%' }}>Find Local Services</h1>
-        <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.55)', margin: '0 0 24px', position: 'relative', textAlign: 'center', width: '100%' }}>Natchez & the Miss-Lou Area</p>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '34px', color: 'white', lineHeight: 1.15, margin: '0 0 8px', position: 'relative' }}>Find Local<br />Services</h1>
+        <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.55)', margin: '0 0 24px', position: 'relative' }}>Natchez & the Miss-Lou Area</p>
         <Link href='/search' style={{ display: 'flex', alignItems: 'center', gap: '12px', backgroundColor: 'white', borderRadius: '16px', padding: '0 20px', height: '60px', color: '#94a3b8', fontSize: '17px', width: '100%', minHeight: 0, position: 'relative', textDecoration: 'none' }}>
           <Search size={20} strokeWidth={2} color='#94a3b8' style={{ flexShrink: 0 }} />
           <span>Search businesses...</span>
         </Link>
-        <div style={{ display: 'flex', gap: '12px', marginTop: '16px', position: 'relative', justifyContent: 'center', width: '100%' }}>
+        <div style={{ display: 'flex', gap: '12px', marginTop: '16px', position: 'relative' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <div style={{ width: '6px', height: '6px', backgroundColor: '#4ade80', borderRadius: '50%' }} />
-            <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}>871+ businesses</span>
+            <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}>867+ businesses</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <div style={{ width: '6px', height: '6px', backgroundColor: '#fbbf24', borderRadius: '50%' }} />
@@ -89,7 +88,7 @@ export default function HomePage() {
       </div>
 
       <div style={{ padding: '24px 20px 0' }}>
-        <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#0f172a', margin: '0 0 16px', textAlign: 'center' }}>Browse by Category</h2>
+        <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#0f172a', margin: '0 0 16px' }}>Browse by Category</h2>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
           {categories.map(({ name, slug, icon: Icon, color, bg }) => slug === 'walking-downtown' ? (
             <Link key={slug} href={'/category/' + slug} style={{ gridColumn: '1 / -1', background: 'linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%)', borderRadius: '20px', padding: '20px', display: 'flex', alignItems: 'center', gap: '16px', textDecoration: 'none', minHeight: 0, height: 'auto', boxShadow: '0 8px 24px rgba(30,64,175,0.35)', position: 'relative', overflow: 'hidden', animation: 'pulse-blue 2s ease-in-out infinite' }}>
@@ -111,18 +110,6 @@ export default function HomePage() {
               <span style={{ fontSize: '14px', fontWeight: 600, color: '#334155', lineHeight: 1.3 }}>{name}</span>
             </Link>
           ))}        </div>
-      </div>
-
-      <div style={{ padding: '24px 20px 0' }}>
-        <Link href='/add-business' style={{ display: 'flex', alignItems: 'center', gap: '12px', backgroundColor: 'white', borderRadius: '16px', padding: '16px 20px', textDecoration: 'none', border: '2px dashed #cbd5e1', minHeight: 0, height: 'auto' }}>
-          <div style={{ width: '40px', height: '40px', backgroundColor: '#eff6ff', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <span style={{ fontSize: '22px', color: '#1e40af', fontWeight: 700 }}>+</span>
-          </div>
-          <div style={{ textAlign: 'left' }}>
-            <div style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a' }}>Add Your Business — Free</div>
-            <div style={{ fontSize: '13px', color: '#64748b' }}>Get listed in the Miss-Lou directory</div>
-          </div>
-        </Link>
       </div>
 
       <div style={{ padding: '32px 20px 16px', textAlign: 'center' }}>

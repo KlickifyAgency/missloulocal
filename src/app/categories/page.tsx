@@ -3,7 +3,7 @@ import { ArrowLeft } from 'lucide-react'
 import {
   Wrench, UtensilsCrossed, HeartPulse, Car, ShoppingBag,
   Scissors, Scale, Building2, Stethoscope, Church,
-  Palette, Compass, PawPrint, Footprints
+  Palette, Compass, PawPrint, Footprints, ShoppingBasket
 } from 'lucide-react'
 import BottomNav from '@/components/layout/BottomNav'
 
@@ -21,6 +21,7 @@ const categories = [
   { name: 'Arts & Education',     slug: 'arts-education',      icon: Palette,         color: '#f59e0b', bg: '#fffbeb' },
   { name: 'Tours & Attractions',  slug: 'tours-attractions',   icon: Compass,         color: '#0369a1', bg: '#e0f2fe' },
   { name: 'Pet Services',         slug: 'pet-services',        icon: PawPrint,        color: '#d97706', bg: '#fffbeb' },
+  { name: 'Farmers Market',        slug: 'farmers-market',    icon: ShoppingBasket,  color: '#65a30d', bg: '#f7fee7' },
   { name: 'Walking Downtown',     slug: 'walking-downtown',    icon: Footprints,      color: '#1e40af', bg: '#dbeafe' },
 ]
 

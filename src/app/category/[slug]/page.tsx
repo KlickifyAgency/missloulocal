@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { ArrowLeft, Phone, MapPin, Clock, CheckCircle, Star, Globe, Navigation } from 'lucide-react'
-import { Wrench, UtensilsCrossed, HeartPulse, Car, ShoppingBag, Scissors, Scale, Building2, Stethoscope, Church, Palette, Compass, PawPrint, Footprints } from 'lucide-react'
+import { Wrench, UtensilsCrossed, HeartPulse, Car, ShoppingBag, Scissors, Scale, Building2, Stethoscope, Church, Palette, Compass, PawPrint, Footprints, ShoppingBasket } from 'lucide-react'
 import Link from 'next/link'
 import BottomNav from '@/components/layout/BottomNav'
 
@@ -29,6 +29,7 @@ const categoryMeta: Record<string, { name: string; color: string; bg: string }> 
   'tours-attractions':   { name: 'Tours & Attractions',  color: '#0369a1', bg: '#e0f2fe' },
   'pet-services':        { name: 'Pet Services',         color: '#d97706', bg: '#fffbeb' },
   'walking-downtown':    { name: 'Walking Downtown',     color: '#1e40af', bg: '#eff6ff' },
+  'farmers-market':      { name: 'Farmers Market',       color: '#65a30d', bg: '#f7fee7' },
 }
 
 function takeMeThere(address: string) {
