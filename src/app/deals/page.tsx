@@ -186,9 +186,9 @@ export default function DealsPage() {
             </div>
           </div>
           <p style={{ fontSize: '13px', color: '#1e40af', margin: '0 0 14px', lineHeight: 1.5 }}>Want to reach locals and tourists with a special offer? Contact us and we will take care of everything.</p>
-          <a href='mailto:support@klickifyagency.com?subject=I want to add a deal to MissLouLocal' style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', backgroundColor: '#1e40af', borderRadius: '12px', height: '48px', minHeight: 0, color: 'white', fontSize: '15px', fontWeight: 700, textDecoration: 'none', width: '100%' }}>
-            Contact Us — It is Free
-          </a>
+          <Link href='/submit-deal' style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', backgroundColor: '#1e40af', borderRadius: '12px', height: '48px', minHeight: 0, color: 'white', fontSize: '15px', fontWeight: 700, textDecoration: 'none', width: '100%' }}>
+            Submit Your Deal — Free
+          </Link>
         </div>
 
       </div>
