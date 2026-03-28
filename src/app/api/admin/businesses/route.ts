@@ -19,6 +19,17 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(data ?? [])
   }
 
+  if (tab === 'emails') {
+    const { data, error } = await supabase
+      .from('businesses')
+      .select('id, name, email, phone, category_id, categories(slug)')
+      .eq('is_active', true)
+      .not('email', 'is', null)
+      .order('name')
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json((data ?? []).map((b: any) => ({ ...b, category_slug: b.categories?.slug ?? '' })))
+  }
+
   const isActive = tab === 'active'
   const { data, error } = await supabase
     .from('businesses')
