@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { ArrowLeft, Star, Phone, MapPin, Clock, Tag, CheckCircle, Navigation } from 'lucide-react'
 import Link from 'next/link'
 import BottomNav from '@/components/layout/BottomNav'
-import SecretAdminButton from '@/components/layout/SecretAdminButton'
+
 
 function timeLeft(dateStr: string) {
   const diff = new Date(dateStr).getTime() - Date.now()
@@ -148,7 +148,7 @@ export default function DealsPage() {
       </div>
 
       <div style={{ padding: '4px 20px 16px', textAlign: 'center' }}>
-        <SecretAdminButton />
+        <div style={{ fontSize: "12px", color: "#94a3b8" }}>Powered by <a href="https://klickifyagency.com" target="_blank" rel="noopener noreferrer" style={{ color: "#e94560", fontWeight: 600, textDecoration: "none" }}>Klickify Agency</a></div>
       </div>
       <BottomNav />
     </div>
