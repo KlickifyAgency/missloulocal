@@ -1,21 +1,21 @@
 'use client'
-import { Home, Grid3x3, Star, CalendarDays, Navigation } from 'lucide-react'
+import { Home, Grid3x3, Star, CalendarDays, Navigation, Settings } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const navItems = [
-  { href: '/',         icon: Home,        label: 'Home'   },
-  { href: '/categories', icon: Grid3x3,   label: 'Browse' },
-  { href: '/near-me',  icon: Navigation,  label: 'Near Me', special: true },
-  { href: '/deals',    icon: Star,        label: 'Deals'  },
-  { href: '/events',   icon: CalendarDays,label: 'Events' },
+  { href: '/',           icon: Home,        label: 'Home'    },
+  { href: '/categories', icon: Grid3x3,     label: 'Browse'  },
+  { href: '/near-me',    icon: Navigation,  label: 'Near Me', special: true },
+  { href: '/deals',      icon: Star,        label: 'Deals'   },
+  { href: '/events',     icon: CalendarDays,label: 'Events'  },
 ]
 
 export default function BottomNav() {
   const pathname = usePathname()
   return (
     <nav style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 50, backgroundColor: 'white', borderTop: '1px solid #f1f5f9', paddingBottom: 'env(safe-area-inset-bottom)' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', height: '64px', padding: '0 8px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', height: '64px', padding: '0 4px' }}>
         {navItems.map(({ href, icon: Icon, label, special }) => {
           const active = pathname === href
           if (special) return (
@@ -33,6 +33,10 @@ export default function BottomNav() {
             </Link>
           )
         })}
+        <Link href='/admin' style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '3px', flex: 1, textDecoration: 'none', minHeight: 0, height: 'auto' }}>
+          <Settings size={22} strokeWidth={pathname === '/admin' ? 2.5 : 1.8} color={pathname === '/admin' ? '#0f3460' : '#94a3b8'} />
+          <span style={{ fontSize: '10px', fontWeight: 600, color: pathname === '/admin' ? '#0f3460' : '#94a3b8' }}>Admin</span>
+        </Link>
       </div>
     </nav>
   )
