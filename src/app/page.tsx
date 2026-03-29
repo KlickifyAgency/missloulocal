@@ -31,19 +31,9 @@ export default function HomePage() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', paddingBottom: '80px' }}>
       <style>{'@keyframes pulse-blue{0%,100%{box-shadow:0 8px 24px rgba(30,64,175,0.35),0 0 0 0 rgba(30,64,175,0.4)}50%{box-shadow:0 8px 40px rgba(30,64,175,0.75),0 0 0 8px rgba(30,64,175,0)}}'}</style>
-      <header style={{ backgroundColor: '#0f3460', padding: '0 20px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 50 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ width: '36px', height: '36px', backgroundColor: '#e94560', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <MapPin size={20} color='white' strokeWidth={2.5} />
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: '22px', color: 'white', lineHeight: 1 }}>Miss<span style={{ color: '#e94560' }}>Lou</span></div>
-            <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.45)', letterSpacing: '2.5px', textTransform: 'uppercase', marginTop: '3px' }}>Local Directory</div>
-          </div>
-        </div>
+      <header style={{ backgroundColor: '#0f3460', padding: '0 20px', height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', position: 'sticky', top: 0, zIndex: 50 }}>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', lineHeight: 1.4 }}>Natchez, MS</div>
-          <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', lineHeight: 1.4 }}>39120</div>
+          <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', lineHeight: 1.4 }}>Natchez, MS 39120</div>
         </div>
       </header>
 
