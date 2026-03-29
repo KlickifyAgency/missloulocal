@@ -42,8 +42,6 @@ export default function HomePage() {
           <span>Search businesses...</span>
         </Link>
       </div>
-      <div
-      </div>
 
       <div style={{ padding: '20px 20px 0', display: 'flex', gap: '12px' }}>
         <Link href='/deals' style={{ flex: 1, backgroundColor: '#fff7ed', borderRadius: '14px', padding: '14px', display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', minHeight: 0, height: 'auto', border: '1px solid #fed7aa' }}>
