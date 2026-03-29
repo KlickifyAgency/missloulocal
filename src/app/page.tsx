@@ -34,7 +34,7 @@ export default function HomePage() {
       <header style={{ backgroundColor: 'transparent', padding: '0 20px', height: '0px', position: 'absolute', top: 0, left: 0, right: 0, zIndex: 50 }}></header>
 
       <div style={{ position: 'relative', overflow: 'hidden', backgroundImage: 'url(/hero-bg.png)', backgroundSize: 'cover', backgroundPosition: 'center center', paddingTop: '52%' }}>
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 20px 24px' }}>
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 20px 40px' }}>
           <Link href='/search' style={{ display: 'flex', alignItems: 'center', gap: '12px', backgroundColor: 'white', borderRadius: '16px', padding: '0 20px', height: '56px', color: '#94a3b8', fontSize: '16px', width: '100%', minHeight: 0, textDecoration: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.2)' }}>
             <Search size={20} strokeWidth={2} color='#94a3b8' style={{ flexShrink: 0 }} />
             <span>Search businesses...</span>
