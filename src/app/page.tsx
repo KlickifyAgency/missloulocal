@@ -3,7 +3,7 @@ import { Search, MapPin, Tag, CalendarDays } from 'lucide-react'
 import {
   Wrench, UtensilsCrossed, HeartPulse, Car, ShoppingBag,
   Scissors, Scale, Building2, Stethoscope, Church,
-  Palette, Compass, PawPrint, Footprints, ShoppingBasket, Heart
+  Palette, Compass, PawPrint, Footprints, ShoppingBasket, Heart, ShoppingCart
 } from 'lucide-react'
 import Link from 'next/link'
 import BottomNav from '@/components/layout/BottomNav'
