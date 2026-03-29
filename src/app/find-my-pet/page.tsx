@@ -1,4 +1,5 @@
 'use client'
+import PhotoCrop from '@/components/pets/PhotoCrop'
 import { useState, useEffect } from 'react'
 import { ArrowLeft, PawPrint, Phone, Mail, MapPin, Heart, Search, Plus, X, CheckCircle, User, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
@@ -62,8 +63,9 @@ function ReportForm({ onClose, onSuccess }: { onClose: () => void, onSuccess: ()
   const [status, setStatus] = useState<'idle'|'loading'|'success'|'error'>('idle')
   const [uploading, setUploading] = useState(false)
   const [preview, setPreview] = useState('')
+  const [cropSrc, setCropSrc] = useState('')
 
-  async function uploadPhoto(file: File) {
+  async function uploadPhoto(file: File | Blob) {
     setUploading(true)
     try {
       const ext = file.name.split('.').pop()
@@ -133,7 +135,13 @@ function ReportForm({ onClose, onSuccess }: { onClose: () => void, onSuccess: ()
               ) : (
                 <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', height: '52px', borderRadius: '12px', border: '2px dashed #e2e8f0', backgroundColor: '#f8fafc', cursor: 'pointer', fontSize: '14px', color: '#64748b', fontWeight: 600 }}>
                   {uploading ? 'Uploading...' : '📷 Take or Choose a Photo'}
-                  <input type='file' accept='image/*' capture='environment' onChange={e => e.target.files?.[0] && uploadPhoto(e.target.files[0])} style={{ display: 'none' }} />
+                  <input type='file' accept='image/*' capture='environment' onChange={e => {
+                  const file = e.target.files?.[0]
+                  if (!file) return
+                  const reader = new FileReader()
+                  reader.onload = ev => setCropSrc(ev.target?.result as string)
+                  reader.readAsDataURL(file)
+                }} style={{ display: 'none' }} />
                 </label>
               )}
             </div>
@@ -145,6 +153,7 @@ function ReportForm({ onClose, onSuccess }: { onClose: () => void, onSuccess: ()
             <input value={form.contact_phone} onChange={e => setForm(p => ({...p, contact_phone: e.target.value}))} placeholder='Your phone (optional)' type='tel' style={inp} />
 
             {status === 'error' && <p style={{ fontSize: '13px', color: '#dc2626', backgroundColor: '#fef2f2', padding: '10px 14px', borderRadius: '10px', margin: 0 }}>Please fill in description, your name and email.</p>}
+            {cropSrc && <PhotoCrop imageSrc={cropSrc} onComplete={blob => { uploadPhoto(blob); setCropSrc('') }} onCancel={() => setCropSrc('')} />}
 
             <button onClick={submit} disabled={status === 'loading'} style={{ height: '54px', minHeight: 0, backgroundColor: petType === 'lost' ? '#dc2626' : petType === 'needs-home' ? '#7c3aed' : '#16a34a', border: 'none', borderRadius: '14px', color: 'white', fontSize: '17px', fontWeight: 700, cursor: 'pointer', width: '100%' }}>
               {status === 'loading' ? 'Posting...' : petType === 'lost' ? 'Post Lost Pet Alert' : petType === 'needs-home' ? 'Post Needs a Home Alert' : 'Post Found Pet Alert'}
