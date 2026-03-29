@@ -29,7 +29,7 @@ export default function AdminPage() {
 
   useEffect(() => { if (authed) loadData() }, [authed, tab])
 
-  async function approve(slug: string, id?: string) {
+  async function approve(slug: string, id?: string, type?: string) {
     const key = slug || id || ''
     setActionLoading(key)
     const body = type === 'yardsale' ? { id, action: 'approve', type: 'yardsale' } : id ? { id, action: 'approve', type: 'deal' } : { slug, action: 'approve' }
