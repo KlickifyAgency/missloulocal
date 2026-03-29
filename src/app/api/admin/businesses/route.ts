@@ -9,6 +9,15 @@ const supabase = createClient(
 export async function GET(request: NextRequest) {
   const tab = request.nextUrl.searchParams.get('tab') ?? 'pending'
 
+  if (tab === 'pets') {
+    const { data, error } = await supabase
+      .from('pet_posts')
+      .select('*')
+      .order('created_at', { ascending: false })
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json(data ?? [])
+  }
+
   if (tab === 'deals') {
     const { data, error } = await supabase
       .from('deals')
@@ -44,6 +53,12 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   const { slug, id, action, type } = await request.json()
+
+  if (type === 'pet') {
+    const { error } = await supabase.from('pet_posts').delete().eq('id', id)
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ success: true })
+  }
 
   if (type === 'deal') {
     if (action === 'approve') {

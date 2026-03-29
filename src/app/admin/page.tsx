@@ -38,11 +38,11 @@ export default function AdminPage() {
     setActionLoading(null)
   }
 
-  async function reject(slug: string, id?: string) {
+  async function reject(slug: string, id?: string, type?: string) {
     if (!confirm('Delete this listing?')) return
     const key = slug || id || ''
     setActionLoading(key)
-    const body = id ? { id, action: 'reject', type: 'deal' } : { slug, action: 'reject' }
+    const body = type === 'pet' ? { id, action: 'reject', type: 'pet' } : id ? { id, action: 'reject', type: 'deal' } : { slug, action: 'reject' }
     await fetch('/api/admin/businesses', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
     await loadData()
     setActionLoading(null)
@@ -89,6 +89,7 @@ export default function AdminPage() {
     { id: 'active',  label: 'Active'  },
     { id: 'deals',   label: 'Deals'   },
     { id: 'emails',  label: 'Emails'  },
+    { id: 'pets',    label: 'Pets'    },
   ]
 
   const tabStyle = (id: string) => ({
@@ -202,6 +203,39 @@ export default function AdminPage() {
               </button>
               <button onClick={() => reject('', deal.id)} style={{ height: '46px', minHeight: 0, backgroundColor: '#fef2f2', border: '1px solid #fecaca', borderRadius: '12px', color: '#dc2626', fontSize: '14px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '0 18px' }}>
                 <XCircle size={16} /> Reject
+              </button>
+            </div>
+          </div>
+        ))}
+
+        {/* PETS */}
+        {!loading && tab === 'pets' && items.length === 0 && (
+          <div style={{ textAlign: 'center', padding: '48px 20px' }}>
+            <p style={{ fontSize: '16px', fontWeight: 600, color: '#0f172a', margin: 0 }}>No pet posts yet</p>
+          </div>
+        )}
+        {!loading && tab === 'pets' && items.map((pet: any) => (
+          <div key={pet.id} style={{ backgroundColor: 'white', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', border: '1px solid ' + (pet.type === 'lost' ? '#fecaca' : pet.type === 'needs-home' ? '#ddd6fe' : '#bbf7d0') }}>
+            {pet.image_url && (
+              <div style={{ position: 'relative', height: '160px', overflow: 'hidden', backgroundColor: '#000' }}>
+                <img src={pet.image_url} alt='' style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'blur(20px)', transform: 'scale(1.1)', opacity: 0.6 }} />
+                <img src={pet.image_url} alt={pet.pet_name || pet.pet_type} style={{ position: 'relative', width: '100%', height: '100%', objectFit: 'contain', zIndex: 1 }} />
+              </div>
+            )}
+            <div style={{ padding: '14px 16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ backgroundColor: pet.type === 'lost' ? '#dc2626' : pet.type === 'needs-home' ? '#7c3aed' : '#16a34a', color: 'white', fontSize: '11px', fontWeight: 800, padding: '3px 10px', borderRadius: '20px', textTransform: 'uppercase' as const }}>{pet.type}</span>
+                  <span style={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>{pet.pet_type}</span>
+                </div>
+                <span style={{ fontSize: '12px', color: '#94a3b8' }}>{new Date(pet.created_at).toLocaleDateString()}</span>
+              </div>
+              {pet.pet_name && <p style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', margin: '0 0 4px' }}>{pet.pet_name}</p>}
+              {pet.description && <p style={{ fontSize: '13px', color: '#64748b', margin: '0 0 8px', lineHeight: 1.5 }}>{pet.description}</p>}
+              {pet.contact_email && <p style={{ fontSize: '13px', color: '#3b82f6', margin: '0 0 4px' }}>{pet.contact_email}</p>}
+              {pet.contact_phone && <p style={{ fontSize: '13px', color: '#64748b', margin: '0 0 10px' }}>{pet.contact_phone}</p>}
+              <button onClick={() => reject('', pet.id, 'pet')} disabled={actionLoading === pet.id} style={{ width: '100%', height: '44px', minHeight: 0, backgroundColor: '#fef2f2', border: '1px solid #fecaca', borderRadius: '12px', color: '#dc2626', fontSize: '14px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                <XCircle size={16} /> {actionLoading === pet.id ? 'Deleting...' : 'Delete Post'}
               </button>
             </div>
           </div>
