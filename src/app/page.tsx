@@ -37,7 +37,7 @@ export default function HomePage() {
         <img src='/hero-bg.png' alt='MissLouLocal' style={{ width: '100%', height: 'auto', display: 'block' }} />
       </div>
 
-      <div style={{ backgroundColor: '#0f3460', padding: '20px 20px 28px' }}>
+      <div style={{ backgroundColor: '#1565c0', padding: '20px 20px 28px' }}>
         <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '28px', color: 'white', lineHeight: 1.15, margin: '0 0 6px', textAlign: 'center' }}>Find Local Services</h1>
         <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', margin: '0 0 20px', textAlign: 'center' }}>Natchez & the Miss-Lou Area</p>
         <Link href='/search' style={{ display: 'flex', alignItems: 'center', gap: '12px', backgroundColor: 'white', borderRadius: '16px', padding: '0 20px', height: '60px', color: '#94a3b8', fontSize: '17px', width: '100%', minHeight: 0, position: 'relative', textDecoration: 'none' }}>
