@@ -32,7 +32,7 @@ export default function AdminPage() {
   async function approve(slug: string, id?: string, type?: string) {
     const key = slug || id || ''
     setActionLoading(key)
-    const body = type === 'yardsale' ? { id, action: 'approve', type: 'yardsale' } : id ? { id, action: 'approve', type: 'deal' } : { slug, action: 'approve' }
+    const body = type === 'yardsale' ? { id, action: 'approve', type: 'yardsale' } : type === 'farmer' ? { id, action: 'approve', type: 'farmer' } : id ? { id, action: 'approve', type: 'deal' } : { slug, action: 'approve' }
     await fetch('/api/admin/businesses', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
     await loadData()
     setActionLoading(null)
@@ -42,7 +42,7 @@ export default function AdminPage() {
     if (!confirm('Delete this listing?')) return
     const key = slug || id || ''
     setActionLoading(key)
-    const body = type === 'pet' ? { id, action: 'reject', type: 'pet' } : type === 'yardsale' ? { id, action: 'reject', type: 'yardsale' } : id ? { id, action: 'reject', type: 'deal' } : { slug, action: 'reject' }
+    const body = type === 'pet' ? { id, action: 'reject', type: 'pet' } : type === 'yardsale' ? { id, action: 'reject', type: 'yardsale' } : type === 'farmer' ? { id, action: 'reject', type: 'farmer' } : id ? { id, action: 'reject', type: 'deal' } : { slug, action: 'reject' }
     await fetch('/api/admin/businesses', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
     await loadData()
     setActionLoading(null)
@@ -91,6 +91,7 @@ export default function AdminPage() {
     { id: 'emails',     label: 'Emails'     },
     { id: 'pets',       label: 'Pets'       },
     { id: 'yardsales',  label: 'Yard Sales' },
+    { id: 'farmers',    label: 'Farmers Mkt' },
   ]
 
   const tabStyle = (id: string) => ({
@@ -204,6 +205,38 @@ export default function AdminPage() {
               </button>
               <button onClick={() => reject('', deal.id)} style={{ height: '46px', minHeight: 0, backgroundColor: '#fef2f2', border: '1px solid #fecaca', borderRadius: '12px', color: '#dc2626', fontSize: '14px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '0 18px' }}>
                 <XCircle size={16} /> Reject
+              </button>
+            </div>
+          </div>
+        ))}
+
+        {/* FARMERS MARKET */}
+        {!loading && tab === 'farmers' && items.length === 0 && (
+          <div style={{ textAlign: 'center', padding: '48px 20px' }}>
+            <p style={{ fontSize: '16px', fontWeight: 600, color: '#0f172a', margin: 0 }}>No vendor submissions yet</p>
+          </div>
+        )}
+        {!loading && tab === 'farmers' && items.map((v: any) => (
+          <div key={v.id} style={{ backgroundColor: 'white', borderRadius: '16px', padding: '16px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', border: v.is_approved ? '1px solid #d9f99d' : '2px solid #fbbf24' }}>
+            {!v.is_approved && (
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', backgroundColor: '#fef3c7', borderRadius: '20px', padding: '3px 10px', marginBottom: '10px' }}>
+                <Clock size={11} color='#92400e' />
+                <span style={{ fontSize: '11px', fontWeight: 700, color: '#92400e', textTransform: 'uppercase' as const }}>Pending</span>
+              </div>
+            )}
+            <h3 style={{ fontSize: '17px', fontWeight: 700, color: '#0f172a', margin: '0 0 6px' }}>{v.vendor_name}</h3>
+            {v.products && <p style={{ fontSize: '14px', color: '#65a30d', fontWeight: 600, margin: '0 0 4px' }}>{v.products}</p>}
+            {v.market_days && <p style={{ fontSize: '13px', color: '#64748b', margin: '0 0 4px' }}>{v.market_days}</p>}
+            {v.description && <p style={{ fontSize: '13px', color: '#64748b', margin: '0 0 8px' }}>{v.description}</p>}
+            <p style={{ fontSize: '13px', color: '#3b82f6', margin: '0 0 12px' }}>{v.contact_email}</p>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              {!v.is_approved && (
+                <button onClick={() => approve('', v.id, 'farmer')} disabled={actionLoading === v.id} style={{ flex: 1, height: '46px', minHeight: 0, backgroundColor: '#65a30d', border: 'none', borderRadius: '12px', color: 'white', fontSize: '15px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                  <CheckCircle size={16} /> {actionLoading === v.id ? 'Approving...' : 'Approve'}
+                </button>
+              )}
+              <button onClick={() => reject('', v.id, 'farmer')} style={{ height: '46px', minHeight: 0, backgroundColor: '#fef2f2', border: '1px solid #fecaca', borderRadius: '12px', color: '#dc2626', fontSize: '14px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '0 16px' }}>
+                <XCircle size={16} /> {v.is_approved ? 'Remove' : 'Reject'}
               </button>
             </div>
           </div>

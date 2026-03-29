@@ -9,6 +9,15 @@ const supabase = createClient(
 export async function GET(request: NextRequest) {
   const tab = request.nextUrl.searchParams.get('tab') ?? 'pending'
 
+  if (tab === 'farmers') {
+    const { data, error } = await supabase
+      .from('farmers_market_vendors')
+      .select('*')
+      .order('created_at', { ascending: false })
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json(data ?? [])
+  }
+
   if (tab === 'yardsales') {
     const { data, error } = await supabase
       .from('yard_sales')
@@ -62,6 +71,18 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   const { slug, id, action, type } = await request.json()
+
+  if (type === 'farmer') {
+    if (action === 'approve') {
+      const { error } = await supabase.from('farmers_market_vendors').update({ is_approved: true }).eq('id', id)
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+    if (action === 'reject') {
+      const { error } = await supabase.from('farmers_market_vendors').delete().eq('id', id)
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+    return NextResponse.json({ success: true })
+  }
 
   if (type === 'yardsale') {
     if (action === 'approve') {
