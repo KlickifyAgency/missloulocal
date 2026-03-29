@@ -59,7 +59,7 @@ export default function HomePage() {
         <div style={{ display: 'flex', gap: '12px', marginTop: '16px', position: 'relative', justifyContent: 'center', width: '100%' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <div style={{ width: '6px', height: '6px', backgroundColor: '#4ade80', borderRadius: '50%' }} />
-            <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}>871+ businesses</span>
+            <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}>875+ businesses</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <div style={{ width: '6px', height: '6px', backgroundColor: '#fbbf24', borderRadius: '50%' }} />
