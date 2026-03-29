@@ -230,7 +230,12 @@ export default function FindMyPetPage() {
 
         {filtered.map(post => (
           <div key={post.id} style={{ backgroundColor: 'white', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', border: '1px solid ' + (post.type === 'lost' ? '#fecaca' : post.type === 'needs-home' ? '#ddd6fe' : '#bbf7d0') }}>
-            {post.image_url && <img src={post.image_url} alt={post.pet_name || post.pet_type} style={{ width: '100%', height: '260px', objectFit: 'cover' as const, objectPosition: 'center 20%' }} />}
+            {post.image_url && (
+            <div style={{ position: 'relative', height: '260px', overflow: 'hidden', backgroundColor: '#000' }}>
+              <img src={post.image_url} alt='' style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'blur(20px)', transform: 'scale(1.1)', opacity: 0.6 }} />
+              <img src={post.image_url} alt={post.pet_name || post.pet_type} style={{ position: 'relative', width: '100%', height: '100%', objectFit: 'contain', zIndex: 1 }} />
+            </div>
+          )}
             <div style={{ padding: '14px 16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
