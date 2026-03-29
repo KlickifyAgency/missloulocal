@@ -66,17 +66,15 @@ function ReportForm({ onClose, onSuccess }: { onClose: () => void, onSuccess: ()
   async function uploadPhoto(file: File | Blob) {
     setUploading(true)
     try {
-      const ext = (file instanceof File ? file.name.split('.').pop() : null) || 'jpg'
-      const fileName = 'pet-' + Date.now() + '.' + ext
-      const { createClient } = await import('@supabase/supabase-js')
-      const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
-      const { data, error } = await supabase.storage.from('pet-photos').upload(fileName, file, { contentType: file.type || 'image/jpeg' })
-      if (error) throw error
-      const { data: { publicUrl } } = supabase.storage.from('pet-photos').getPublicUrl(fileName)
-      setForm(p => ({ ...p, image_url: publicUrl }))
-      setPreview(publicUrl)
-      console.log('Photo uploaded:', publicUrl)
-    } catch(e) { console.error(e) }
+      const formData = new FormData()
+      const f = file instanceof File ? file : new File([file], 'pet.jpg', { type: 'image/jpeg' })
+      formData.append('file', f)
+      const res = await fetch('/api/pets/upload', { method: 'POST', body: formData })
+      const data = await res.json()
+      if (data.error) throw new Error(data.error)
+      setForm(p => ({ ...p, image_url: data.url }))
+      setPreview(data.url)
+    } catch(e) { console.error('Upload error:', e) }
     setUploading(false)
   }
 
