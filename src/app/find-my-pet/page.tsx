@@ -59,6 +59,24 @@ function ContactModal({ post, onClose }: { post: any, onClose: () => void }) {
 function ReportForm({ onClose, onSuccess }: { onClose: () => void, onSuccess: () => void }) {
   const [form, setForm] = useState({ type: 'lost', pet_name: '', pet_type: 'Dog', description: '', contact_name: '', contact_email: '', contact_phone: '', location: '', image_url: '' })
   const [status, setStatus] = useState<'idle'|'loading'|'success'|'error'>('idle')
+  const [uploading, setUploading] = useState(false)
+  const [preview, setPreview] = useState('')
+
+  async function uploadPhoto(file: File) {
+    setUploading(true)
+    try {
+      const ext = file.name.split('.').pop()
+      const fileName = 'pet-' + Date.now() + '.' + ext
+      const { createClient } = await import('@supabase/supabase-js')
+      const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
+      const { data, error } = await supabase.storage.from('pet-photos').upload(fileName, file, { contentType: file.type })
+      if (error) throw error
+      const { data: { publicUrl } } = supabase.storage.from('pet-photos').getPublicUrl(fileName)
+      setForm(p => ({ ...p, image_url: publicUrl }))
+      setPreview(publicUrl)
+    } catch(e) { console.error(e) }
+    setUploading(false)
+  }
 
   async function submit() {
     if (!form.description || !form.contact_email || !form.contact_name) { setStatus('error'); return }
@@ -87,10 +105,13 @@ function ReportForm({ onClose, onSuccess }: { onClose: () => void, onSuccess: ()
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            <div style={{ display: 'flex', gap: '10px' }}>
-              {['lost', 'found'].map(t => (
-                <button key={t} onClick={() => setForm(p => ({...p, type: t}))} style={{ flex: 1, height: '48px', minHeight: 0, backgroundColor: form.type === t ? (t === 'lost' ? '#dc2626' : '#16a34a') : '#f1f5f9', border: 'none', borderRadius: '12px', color: form.type === t ? 'white' : '#64748b', fontSize: '15px', fontWeight: 700, cursor: 'pointer', textTransform: 'capitalize' as const }}>{t === 'lost' ? 'I Lost a Pet' : 'I Found a Pet'}</button>
-              ))}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                {['lost', 'found'].map(t => (
+                  <button key={t} onClick={() => setForm(p => ({...p, type: t}))} style={{ flex: 1, height: '48px', minHeight: 0, backgroundColor: form.type === t ? (t === 'lost' ? '#dc2626' : '#16a34a') : '#f1f5f9', border: 'none', borderRadius: '12px', color: form.type === t ? 'white' : '#64748b', fontSize: '14px', fontWeight: 700, cursor: 'pointer' }}>{t === 'lost' ? 'Lost Pet' : 'Found Pet'}</button>
+                ))}
+              </div>
+              <button onClick={() => setForm(p => ({...p, type: 'needs-home'}))} style={{ height: '48px', minHeight: 0, backgroundColor: form.type === 'needs-home' ? '#7c3aed' : '#f1f5f9', border: 'none', borderRadius: '12px', color: form.type === 'needs-home' ? 'white' : '#64748b', fontSize: '14px', fontWeight: 700, cursor: 'pointer', width: '100%' }}>Needs a Home</button>
             </div>
 
             <select value={form.pet_type} onChange={e => setForm(p => ({...p, pet_type: e.target.value}))} style={inp}>
@@ -100,7 +121,20 @@ function ReportForm({ onClose, onSuccess }: { onClose: () => void, onSuccess: ()
             <input value={form.pet_name} onChange={e => setForm(p => ({...p, pet_name: e.target.value}))} placeholder="Pet's name (if known)" style={inp} />
             <input value={form.location} onChange={e => setForm(p => ({...p, location: e.target.value}))} placeholder='Last seen / Found at location' style={inp} />
             <textarea value={form.description} onChange={e => setForm(p => ({...p, description: e.target.value}))} placeholder='Describe the pet — color, size, collar, any markings... *' style={{ width: '100%', minHeight: '90px', borderRadius: '12px', border: '1.5px solid #e2e8f0', padding: '12px 16px', fontSize: '16px', outline: 'none', resize: 'vertical' as const, fontFamily: 'inherit', boxSizing: 'border-box' as const }} />
-            <input value={form.image_url} onChange={e => setForm(p => ({...p, image_url: e.target.value}))} placeholder='Photo URL (optional — paste from Google Photos, etc.)' style={inp} />
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '8px' }}>Pet Photo (optional)</label>
+              {preview ? (
+                <div style={{ position: 'relative', marginBottom: '4px' }}>
+                  <img src={preview} alt='Pet' style={{ width: '100%', height: '160px', objectFit: 'cover', borderRadius: '12px', border: '1.5px solid #e2e8f0' }} />
+                  <button onClick={() => { setPreview(''); setForm(p => ({...p, image_url: ''})) }} style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', minHeight: 0, backgroundColor: 'rgba(0,0,0,0.5)', border: 'none', borderRadius: '50%', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' }}>×</button>
+                </div>
+              ) : (
+                <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', height: '52px', borderRadius: '12px', border: '2px dashed #e2e8f0', backgroundColor: '#f8fafc', cursor: 'pointer', fontSize: '14px', color: '#64748b', fontWeight: 600 }}>
+                  {uploading ? 'Uploading...' : '📷 Take or Choose a Photo'}
+                  <input type='file' accept='image/*' capture='environment' onChange={e => e.target.files?.[0] && uploadPhoto(e.target.files[0])} style={{ display: 'none' }} />
+                </label>
+              )}
+            </div>
 
             <div style={{ height: '1px', backgroundColor: '#f1f5f9' }} />
             <p style={{ fontSize: '13px', color: '#64748b', margin: 0 }}>Your contact info (shared only when someone responds):</p>
@@ -110,8 +144,8 @@ function ReportForm({ onClose, onSuccess }: { onClose: () => void, onSuccess: ()
 
             {status === 'error' && <p style={{ fontSize: '13px', color: '#dc2626', backgroundColor: '#fef2f2', padding: '10px 14px', borderRadius: '10px', margin: 0 }}>Please fill in description, your name and email.</p>}
 
-            <button onClick={submit} disabled={status === 'loading'} style={{ height: '54px', minHeight: 0, backgroundColor: form.type === 'lost' ? '#dc2626' : '#16a34a', border: 'none', borderRadius: '14px', color: 'white', fontSize: '17px', fontWeight: 700, cursor: 'pointer', width: '100%' }}>
-              {status === 'loading' ? 'Posting...' : form.type === 'lost' ? 'Post Lost Pet Alert' : 'Post Found Pet Alert'}
+            <button onClick={submit} disabled={status === 'loading'} style={{ height: '54px', minHeight: 0, backgroundColor: form.type === 'lost' ? '#dc2626' : form.type === 'needs-home' ? '#7c3aed' : '#16a34a', border: 'none', borderRadius: '14px', color: 'white', fontSize: '17px', fontWeight: 700, cursor: 'pointer', width: '100%' }}>
+              {status === 'loading' ? 'Posting...' : form.type === 'lost' ? 'Post Lost Pet Alert' : form.type === 'needs-home' ? 'Post Needs a Home Alert' : 'Post Found Pet Alert'}
             </button>
           </div>
         )}
@@ -140,6 +174,7 @@ export default function FindMyPetPage() {
   const filtered = posts.filter(p => filter === 'all' || p.type === filter)
   const lostCount = posts.filter(p => p.type === 'lost').length
   const foundCount = posts.filter(p => p.type === 'found').length
+  const needsHomeCount = posts.filter(p => p.type === 'needs-home').length
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', paddingBottom: '80px' }}>
@@ -158,20 +193,24 @@ export default function FindMyPetPage() {
         </button>
       </header>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', padding: '14px 16px 0' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', padding: '14px 16px 0' }}>
         <div style={{ backgroundColor: '#fef2f2', borderRadius: '14px', padding: '14px', textAlign: 'center' }}>
           <p style={{ fontSize: '24px', fontWeight: 800, color: '#dc2626', margin: '0 0 2px' }}>{lostCount}</p>
           <p style={{ fontSize: '12px', color: '#dc2626', fontWeight: 600, margin: 0 }}>Lost Pets</p>
         </div>
         <div style={{ backgroundColor: '#f0fdf4', borderRadius: '14px', padding: '14px', textAlign: 'center' }}>
-          <p style={{ fontSize: '24px', fontWeight: 800, color: '#16a34a', margin: '0 0 2px' }}>{foundCount}</p>
-          <p style={{ fontSize: '12px', color: '#16a34a', fontWeight: 600, margin: 0 }}>Found Pets</p>
+          <p style={{ fontSize: '22px', fontWeight: 800, color: '#16a34a', margin: '0 0 2px' }}>{foundCount}</p>
+          <p style={{ fontSize: '11px', color: '#16a34a', fontWeight: 600, margin: 0 }}>Found</p>
+        </div>
+        <div style={{ backgroundColor: '#f5f3ff', borderRadius: '14px', padding: '14px', textAlign: 'center' }}>
+          <p style={{ fontSize: '22px', fontWeight: 800, color: '#7c3aed', margin: '0 0 2px' }}>{needsHomeCount}</p>
+          <p style={{ fontSize: '11px', color: '#7c3aed', fontWeight: 600, margin: 0 }}>Needs Home</p>
         </div>
       </div>
 
       <div style={{ display: 'flex', gap: '8px', padding: '12px 16px' }}>
-        {(['all', 'lost', 'found'] as const).map(f => (
-          <button key={f} onClick={() => setFilter(f)} style={{ flex: 1, height: '38px', minHeight: 0, backgroundColor: filter === f ? '#0f3460' : 'white', border: '1px solid ' + (filter === f ? '#0f3460' : '#e2e8f0'), borderRadius: '10px', color: filter === f ? 'white' : '#64748b', fontSize: '13px', fontWeight: 600, cursor: 'pointer', textTransform: 'capitalize' as const }}>{f === 'all' ? 'All' : f === 'lost' ? 'Lost' : 'Found'}</button>
+        {(['all', 'lost', 'found', 'needs-home'] as const).map(f => (
+          <button key={f} onClick={() => setFilter(f as any)} style={{ flex: 1, height: '38px', minHeight: 0, backgroundColor: filter === f ? '#0f3460' : 'white', border: '1px solid ' + (filter === f ? '#0f3460' : '#e2e8f0'), borderRadius: '10px', color: filter === f ? 'white' : '#64748b', fontSize: '11px', fontWeight: 600, cursor: 'pointer' }}>{f === 'all' ? 'All' : f === 'lost' ? 'Lost' : f === 'found' ? 'Found' : 'Needs Home'}</button>
         ))}
       </div>
 
@@ -188,12 +227,12 @@ export default function FindMyPetPage() {
         )}
 
         {filtered.map(post => (
-          <div key={post.id} style={{ backgroundColor: 'white', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', border: '1px solid ' + (post.type === 'lost' ? '#fecaca' : '#bbf7d0') }}>
+          <div key={post.id} style={{ backgroundColor: 'white', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', border: '1px solid ' + (post.type === 'lost' ? '#fecaca' : post.type === 'needs-home' ? '#ddd6fe' : '#bbf7d0') }}>
             {post.image_url && <img src={post.image_url} alt={post.pet_name || post.pet_type} style={{ width: '100%', height: '180px', objectFit: 'cover' as const }} />}
             <div style={{ padding: '14px 16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ backgroundColor: post.type === 'lost' ? '#dc2626' : '#16a34a', color: 'white', fontSize: '11px', fontWeight: 800, padding: '3px 10px', borderRadius: '20px', textTransform: 'uppercase' as const }}>{post.type}</span>
+                  <span style={{ backgroundColor: post.type === 'lost' ? '#dc2626' : post.type === 'needs-home' ? '#7c3aed' : '#16a34a', color: 'white', fontSize: '11px', fontWeight: 800, padding: '3px 10px', borderRadius: '20px', textTransform: 'uppercase' as const }}>{post.type}</span>
                   <span style={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>{post.pet_type}</span>
                 </div>
                 <span style={{ fontSize: '12px', color: '#94a3b8' }}>{new Date(post.created_at).toLocaleDateString()}</span>
