@@ -33,7 +33,7 @@ export default function HomePage() {
       <style>{'@keyframes pulse-blue{0%,100%{box-shadow:0 8px 24px rgba(30,64,175,0.35),0 0 0 0 rgba(30,64,175,0.4)}50%{box-shadow:0 8px 40px rgba(30,64,175,0.75),0 0 0 8px rgba(30,64,175,0)}}'}</style>
       <header style={{ backgroundColor: 'transparent', padding: '0 20px', height: '0px', position: 'absolute', top: 0, left: 0, right: 0, zIndex: 50 }}></header>
 
-      <div style={{ padding: '28px 20px 36px', position: 'relative', overflow: 'hidden', backgroundImage: 'url(/hero-bg.png)', backgroundSize: 'cover', backgroundPosition: 'center top' }}>
+      <div style={{ padding: '180px 20px 36px', position: 'relative', overflow: 'hidden', backgroundImage: 'url(/hero-bg.png)', backgroundSize: 'cover', backgroundPosition: 'center top' }}>
         <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(10,25,50,0.75)', zIndex: 0 }} /><div style={{ position: 'absolute', top: '-60px', right: '-60px', width: '200px', height: '200px', backgroundColor: '#e94560', borderRadius: '50%', opacity: 0.08 }} />
         <div style={{ position: 'absolute', bottom: '-40px', left: '-30px', width: '150px', height: '150px', backgroundColor: '#fbbf24', borderRadius: '50%', opacity: 0.06 }} />
         <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '34px', color: 'white', lineHeight: 1.15, margin: '0 0 8px', position: 'relative', textAlign: 'center', width: '100%' }}>Find Local Services</h1>
