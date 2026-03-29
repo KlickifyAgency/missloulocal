@@ -108,10 +108,10 @@ function ReportForm({ onClose, onSuccess }: { onClose: () => void, onSuccess: ()
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <div style={{ display: 'flex', gap: '8px' }}>
                 {['lost', 'found'].map(t => (
-                  <button key={t} onClick={() => setForm(p => ({...p, type: t}))} style={{ flex: 1, height: '48px', minHeight: 0, backgroundColor: form.type === t ? (t === 'lost' ? '#dc2626' : '#16a34a') : '#f1f5f9', border: 'none', borderRadius: '12px', color: form.type === t ? 'white' : '#64748b', fontSize: '14px', fontWeight: 700, cursor: 'pointer' }}>{t === 'lost' ? 'Lost Pet' : 'Found Pet'}</button>
+                  <button type='button' key={t} onClick={() => setForm(p => ({...p, type: t}))} style={{ flex: 1, height: '48px', minHeight: 0, backgroundColor: form.type === t ? (t === 'lost' ? '#dc2626' : '#16a34a') : '#f1f5f9', border: 'none', borderRadius: '12px', color: form.type === t ? 'white' : '#64748b', fontSize: '14px', fontWeight: 700, cursor: 'pointer' }}>{t === 'lost' ? 'Lost Pet' : 'Found Pet'}</button>
                 ))}
               </div>
-              <button onClick={() => setForm(p => ({...p, type: 'needs-home'}))} style={{ height: '48px', minHeight: 0, backgroundColor: form.type === 'needs-home' ? '#7c3aed' : '#f1f5f9', border: 'none', borderRadius: '12px', color: form.type === 'needs-home' ? 'white' : '#64748b', fontSize: '14px', fontWeight: 700, cursor: 'pointer', width: '100%' }}>Needs a Home</button>
+              <button type='button' onClick={() => setForm(p => ({...p, type: 'needs-home'}))} style={{ height: '48px', minHeight: 0, backgroundColor: form.type === 'needs-home' ? '#7c3aed' : '#f1f5f9', border: 'none', borderRadius: '12px', color: form.type === 'needs-home' ? 'white' : '#64748b', fontSize: '14px', fontWeight: 700, cursor: 'pointer', width: '100%' }}>Needs a Home</button>
             </div>
 
             <select value={form.pet_type} onChange={e => setForm(p => ({...p, pet_type: e.target.value}))} style={inp}>
