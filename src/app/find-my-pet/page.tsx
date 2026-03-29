@@ -70,11 +70,12 @@ function ReportForm({ onClose, onSuccess }: { onClose: () => void, onSuccess: ()
       const fileName = 'pet-' + Date.now() + '.' + ext
       const { createClient } = await import('@supabase/supabase-js')
       const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
-      const { data, error } = await supabase.storage.from('pet-photos').upload(fileName, file, { contentType: file.type })
+      const { data, error } = await supabase.storage.from('pet-photos').upload(fileName, file, { contentType: file.type || 'image/jpeg' })
       if (error) throw error
       const { data: { publicUrl } } = supabase.storage.from('pet-photos').getPublicUrl(fileName)
       setForm(p => ({ ...p, image_url: publicUrl }))
       setPreview(publicUrl)
+      console.log('Photo uploaded:', publicUrl)
     } catch(e) { console.error(e) }
     setUploading(false)
   }
