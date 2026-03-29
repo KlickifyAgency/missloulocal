@@ -69,7 +69,7 @@ export default function HomePage() {
         <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#0f172a', margin: '0 0 16px', textAlign: 'center' }}>Browse by Category</h2>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
           {categories.map(({ name, slug, icon: Icon, color, bg }) => {
-            const finalHref = slug === 'find-my-pet' ? '/find-my-pet' : slug === 'yard-sales' ? '/yard-sales' : slug === 'walking-downtown' ? '/category/walking-downtown' : '/category/' + slug
+            const finalHref = slug === 'find-my-pet' ? '/find-my-pet' : slug === 'yard-sales' ? '/yard-sales' : slug === 'farmers-market' ? '/farmers-market' : slug === 'walking-downtown' ? '/category/walking-downtown' : '/category/' + slug
             if (slug === 'walking-downtown') return (
               <Link key={slug} href={finalHref} style={{ gridColumn: '1 / -1', background: 'linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%)', borderRadius: '20px', padding: '20px', display: 'flex', alignItems: 'center', gap: '16px', textDecoration: 'none', minHeight: 0, height: 'auto', boxShadow: '0 8px 24px rgba(30,64,175,0.35)', position: 'relative', overflow: 'hidden', animation: 'pulse-blue 2s ease-in-out infinite' }}>
                 <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '120px', height: '120px', backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '50%' }} />
