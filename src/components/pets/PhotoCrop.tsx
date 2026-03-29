@@ -23,27 +23,37 @@ export default function PhotoCrop({ imageSrc, onComplete, onCancel }: Props) {
     return new Blob([ab], { type: 'image/jpeg' })
   }
 
-  async function cropAndUpload() {
+  function cropAndUpload() {
     const img = imgRef.current
-    if (!img) return
+    if (!img) { console.log('no img ref'); return }
     setProcessing(true)
-    const scaleX = img.naturalWidth / img.offsetWidth
-    const scaleY = img.naturalHeight / img.offsetHeight
-    const canvas = document.createElement('canvas')
-    const cropW = (crop.width / 100) * img.offsetWidth
-    const cropH = (crop.height / 100) * img.offsetHeight
-    const cropX = (crop.x / 100) * img.offsetWidth
-    const cropY = (crop.y / 100) * img.offsetHeight
-    canvas.width = cropW * scaleX
-    canvas.height = cropH * scaleY
-    const ctx = canvas.getContext('2d')
-    if (!ctx) { setProcessing(false); return }
-    ctx.drawImage(img, cropX * scaleX, cropY * scaleY, cropW * scaleX, cropH * scaleY, 0, 0, canvas.width, canvas.height)
-    canvas.toBlob(blob => {
-      if (blob) onComplete(blob)
-      else onComplete(dataURItoBlob(canvas.toDataURL('image/jpeg', 0.9)))
+
+    try {
+      const scaleX = img.naturalWidth / img.offsetWidth
+      const scaleY = img.naturalHeight / img.offsetHeight
+
+      const cropX = (crop.x / 100) * img.offsetWidth * scaleX
+      const cropY = (crop.y / 100) * img.offsetHeight * scaleY
+      const cropW = (crop.width / 100) * img.offsetWidth * scaleX
+      const cropH = (crop.height / 100) * img.offsetHeight * scaleY
+
+      const canvas = document.createElement('canvas')
+      canvas.width = Math.round(cropW)
+      canvas.height = Math.round(cropH)
+
+      const ctx = canvas.getContext('2d')
+      if (!ctx) { setProcessing(false); return }
+
+      ctx.drawImage(img, Math.round(cropX), Math.round(cropY), Math.round(cropW), Math.round(cropH), 0, 0, Math.round(cropW), Math.round(cropH))
+
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.85)
+      const blob = dataURItoBlob(dataUrl)
+      console.log('Blob size:', blob.size)
+      onComplete(blob)
+    } catch(e) {
+      console.error('Crop error:', e)
       setProcessing(false)
-    }, 'image/jpeg', 0.9)
+    }
   }
 
   return (
@@ -55,7 +65,13 @@ export default function PhotoCrop({ imageSrc, onComplete, onCancel }: Props) {
         </div>
         <div style={{ borderRadius: '12px', overflow: 'hidden', marginBottom: '16px', backgroundColor: '#000' }}>
           <ReactCrop crop={crop} onChange={c => setCrop(c)}>
-            <img ref={imgRef} src={imageSrc} alt='crop preview' style={{ maxWidth: '100%', maxHeight: '55vh', display: 'block', margin: '0 auto' }} />
+            <img
+              ref={imgRef}
+              src={imageSrc}
+              alt='crop'
+              crossOrigin='anonymous'
+              style={{ maxWidth: '100%', maxHeight: '55vh', display: 'block', margin: '0 auto' }}
+            />
           </ReactCrop>
         </div>
         <div style={{ display: 'flex', gap: '10px' }}>
@@ -63,7 +79,7 @@ export default function PhotoCrop({ imageSrc, onComplete, onCancel }: Props) {
             <X size={16} /> Cancel
           </button>
           <button type='button' onClick={cropAndUpload} disabled={processing} style={{ flex: 2, height: '52px', minHeight: 0, backgroundColor: processing ? '#94a3b8' : '#f97316', border: 'none', borderRadius: '14px', color: 'white', fontSize: '15px', fontWeight: 700, cursor: processing ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-            <Check size={16} /> {processing ? 'Processing...' : 'Use this photo'}
+            <Check size={16} /> {processing ? 'Uploading...' : 'Use this photo'}
           </button>
         </div>
       </div>
