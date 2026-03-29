@@ -36,9 +36,9 @@ export default function HomePage() {
       <div>
         <img src='/hero-bg.png' alt='MissLouLocal' style={{ width: '100%', height: 'auto', display: 'block' }} />
       </div>
-      <div style={{ backgroundColor: '#1e40af', padding: '16px 20px' }}>
-        <Link href='/search' style={{ display: 'flex', alignItems: 'center', gap: '12px', backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: '16px', padding: '0 20px', height: '56px', color: 'rgba(255,255,255,0.8)', fontSize: '16px', width: '100%', minHeight: 0, textDecoration: 'none', border: '1px solid rgba(255,255,255,0.25)' }}>
-          <Search size={20} strokeWidth={2} color='rgba(255,255,255,0.7)' style={{ flexShrink: 0 }} />
+      <div style={{ backgroundColor: 'white', padding: '16px 20px' }}>
+        <Link href='/search' style={{ display: 'flex', alignItems: 'center', gap: '12px', backgroundColor: '#1e40af', borderRadius: '16px', padding: '0 20px', height: '56px', color: 'white', fontSize: '16px', width: '100%', minHeight: 0, textDecoration: 'none', border: 'none' }}>
+          <Search size={20} strokeWidth={2} color='white' style={{ flexShrink: 0 }} />
           <span>Search businesses...</span>
         </Link>
       </div>
