@@ -10,6 +10,7 @@ export async function GET() {
     .from('yard_sales')
     .select('*')
     .eq('is_active', true)
+    .eq('is_approved', true)
     .gte('sale_date', new Date().toISOString().split('T')[0])
     .order('sale_date', { ascending: true })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
