@@ -68,7 +68,7 @@ function ReportForm({ onClose, onSuccess }: { onClose: () => void, onSuccess: ()
   async function uploadPhoto(file: File | Blob) {
     setUploading(true)
     try {
-      const ext = file.name.split('.').pop()
+      const ext = (file instanceof File ? file.name.split('.').pop() : null) || 'jpg'
       const fileName = 'pet-' + Date.now() + '.' + ext
       const { createClient } = await import('@supabase/supabase-js')
       const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
