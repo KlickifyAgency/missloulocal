@@ -57,6 +57,7 @@ function ContactModal({ post, onClose }: { post: any, onClose: () => void }) {
 }
 
 function ReportForm({ onClose, onSuccess }: { onClose: () => void, onSuccess: () => void }) {
+  const [petType, setPetType] = useState('lost')
   const [form, setForm] = useState({ type: 'lost', pet_name: '', pet_type: 'Dog', description: '', contact_name: '', contact_email: '', contact_phone: '', location: '', image_url: '' })
   const [status, setStatus] = useState<'idle'|'loading'|'success'|'error'>('idle')
   const [uploading, setUploading] = useState(false)
@@ -81,7 +82,8 @@ function ReportForm({ onClose, onSuccess }: { onClose: () => void, onSuccess: ()
   async function submit() {
     if (!form.description || !form.contact_email || !form.contact_name) { setStatus('error'); return }
     setStatus('loading')
-    const res = await fetch('/api/pets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+    const payload = { ...form, type: petType }
+    const res = await fetch('/api/pets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
     const data = await res.json()
     if (data.success) { setStatus('success'); setTimeout(() => { onSuccess(); onClose(); }, 2000) }
     else setStatus('error')
@@ -108,10 +110,10 @@ function ReportForm({ onClose, onSuccess }: { onClose: () => void, onSuccess: ()
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <div style={{ display: 'flex', gap: '8px' }}>
                 {['lost', 'found'].map(t => (
-                  <button type='button' key={t} onClick={() => setForm(p => ({...p, type: t}))} style={{ flex: 1, height: '48px', minHeight: 0, backgroundColor: form.type === t ? (t === 'lost' ? '#dc2626' : '#16a34a') : '#f1f5f9', border: 'none', borderRadius: '12px', color: form.type === t ? 'white' : '#64748b', fontSize: '14px', fontWeight: 700, cursor: 'pointer' }}>{t === 'lost' ? 'Lost Pet' : 'Found Pet'}</button>
+                  <button type='button' key={t} onClick={() => setPetType(t)} style={{ flex: 1, height: '48px', minHeight: 0, backgroundColor: petType === t ? (t === 'lost' ? '#dc2626' : '#16a34a') : '#f1f5f9', border: 'none', borderRadius: '12px', color: petType === t ? 'white' : '#64748b', fontSize: '14px', fontWeight: 700, cursor: 'pointer' }}>{t === 'lost' ? 'Lost Pet' : 'Found Pet'}</button>
                 ))}
               </div>
-              <button type='button' onClick={() => setForm(p => ({...p, type: 'needs-home'}))} style={{ height: '48px', minHeight: 0, backgroundColor: form.type === 'needs-home' ? '#7c3aed' : '#f1f5f9', border: 'none', borderRadius: '12px', color: form.type === 'needs-home' ? 'white' : '#64748b', fontSize: '14px', fontWeight: 700, cursor: 'pointer', width: '100%' }}>Needs a Home</button>
+              <button type='button' onClick={() => setPetType('needs-home')} style={{ height: '48px', minHeight: 0, backgroundColor: petType === 'needs-home' ? '#7c3aed' : '#f1f5f9', border: 'none', borderRadius: '12px', color: petType === 'needs-home' ? 'white' : '#64748b', fontSize: '14px', fontWeight: 700, cursor: 'pointer', width: '100%' }}>Needs a Home</button>
             </div>
 
             <select value={form.pet_type} onChange={e => setForm(p => ({...p, pet_type: e.target.value}))} style={inp}>
@@ -144,8 +146,8 @@ function ReportForm({ onClose, onSuccess }: { onClose: () => void, onSuccess: ()
 
             {status === 'error' && <p style={{ fontSize: '13px', color: '#dc2626', backgroundColor: '#fef2f2', padding: '10px 14px', borderRadius: '10px', margin: 0 }}>Please fill in description, your name and email.</p>}
 
-            <button onClick={submit} disabled={status === 'loading'} style={{ height: '54px', minHeight: 0, backgroundColor: form.type === 'lost' ? '#dc2626' : form.type === 'needs-home' ? '#7c3aed' : '#16a34a', border: 'none', borderRadius: '14px', color: 'white', fontSize: '17px', fontWeight: 700, cursor: 'pointer', width: '100%' }}>
-              {status === 'loading' ? 'Posting...' : form.type === 'lost' ? 'Post Lost Pet Alert' : form.type === 'needs-home' ? 'Post Needs a Home Alert' : 'Post Found Pet Alert'}
+            <button onClick={submit} disabled={status === 'loading'} style={{ height: '54px', minHeight: 0, backgroundColor: petType === 'lost' ? '#dc2626' : petType === 'needs-home' ? '#7c3aed' : '#16a34a', border: 'none', borderRadius: '14px', color: 'white', fontSize: '17px', fontWeight: 700, cursor: 'pointer', width: '100%' }}>
+              {status === 'loading' ? 'Posting...' : petType === 'lost' ? 'Post Lost Pet Alert' : petType === 'needs-home' ? 'Post Needs a Home Alert' : 'Post Found Pet Alert'}
             </button>
           </div>
         )}
