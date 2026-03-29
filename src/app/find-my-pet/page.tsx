@@ -1,5 +1,4 @@
 'use client'
-import PhotoCrop from '@/components/pets/PhotoCrop'
 import { useState, useEffect } from 'react'
 import { ArrowLeft, PawPrint, Phone, Mail, MapPin, Heart, Search, Plus, X, CheckCircle, User, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
@@ -63,7 +62,6 @@ function ReportForm({ onClose, onSuccess }: { onClose: () => void, onSuccess: ()
   const [status, setStatus] = useState<'idle'|'loading'|'success'|'error'>('idle')
   const [uploading, setUploading] = useState(false)
   const [preview, setPreview] = useState('')
-  const [cropSrc, setCropSrc] = useState('')
 
   async function uploadPhoto(file: File | Blob) {
     setUploading(true)
@@ -135,13 +133,7 @@ function ReportForm({ onClose, onSuccess }: { onClose: () => void, onSuccess: ()
               ) : (
                 <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', height: '52px', borderRadius: '12px', border: '2px dashed #e2e8f0', backgroundColor: '#f8fafc', cursor: 'pointer', fontSize: '14px', color: '#64748b', fontWeight: 600 }}>
                   {uploading ? 'Uploading...' : '📷 Take or Choose a Photo'}
-                  <input type='file' accept='image/*' onChange={e => {
-                  const file = e.target.files?.[0]
-                  if (!file) return
-                  const reader = new FileReader()
-                  reader.onload = ev => setCropSrc(ev.target?.result as string)
-                  reader.readAsDataURL(file)
-                }} style={{ display: 'none' }} />
+                  <input type='file' accept='image/*' onChange={e => { if (e.target.files?.[0]) uploadPhoto(e.target.files[0]) }} style={{ display: 'none' }} />
                 </label>
               )}
             </div>
