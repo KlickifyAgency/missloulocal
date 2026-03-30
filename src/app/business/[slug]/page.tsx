@@ -12,8 +12,9 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const { data: biz } = await supabase.from('businesses').select('*').eq('slug', params.slug).single()
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
+  const { data: biz } = await supabase.from('businesses').select('*').eq('slug', slug).single()
   if (!biz) return { title: 'Business Not Found' }
   return {
     title: biz.name + ' — Natchez, MS | MissLouLocal',
@@ -30,8 +31,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-export default async function BusinessPage({ params }: { params: { slug: string } }) {
-  const { data: biz } = await supabase.from('businesses').select('*, categories(name, slug, color)').eq('slug', params.slug).single()
+export default async function BusinessPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const { data: biz } = await supabase.from('businesses').select('*, categories(name, slug, color)').eq('slug', slug).single()
   if (!biz) notFound()
 
   const stars = biz.google_rating ? Math.round(biz.google_rating) : 0
