@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { ArrowLeft, Phone, MapPin, Globe, Star, CheckCircle, Navigation } from 'lucide-react'
 import BottomNav from '@/components/layout/BottomNav'
 
+export const dynamic = 'force-dynamic'
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
