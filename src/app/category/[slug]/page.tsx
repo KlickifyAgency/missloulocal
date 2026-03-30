@@ -152,15 +152,8 @@ export default function CategoryPage() {
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px', flexWrap: 'wrap' }}>
-                    <a href={'/business/' + biz.slug} style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', display: 'block', textDecoration: 'none' }}>{biz.name}</a>
-                  {biz.google_rating && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '3px' }}>
-                      <span style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 700 }}>{'★'.repeat(Math.round(biz.google_rating))}</span>
-                      <span style={{ fontSize: '11px', fontWeight: 700, color: '#374151' }}>{biz.google_rating}</span>
-                      <span style={{ fontSize: '11px', color: '#94a3b8' }}>({biz.google_review_count?.toLocaleString()})</span>
-                      <img src='https://www.google.com/favicon.ico' alt='G' style={{ width: '10px', height: '10px', borderRadius: '2px' }} />
-                    </div>
-                  )}
+                    <div><a href={'/business/' + biz.slug} style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', display: 'block', textDecoration: 'none', lineHeight: 1.3 }}>{biz.name}</a>{biz.google_rating && (<div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '3px' }}><span style={{ fontSize: '11px', color: '#f59e0b', fontWeight: 700 }}>{'★'.repeat(Math.round(biz.google_rating))}</span><span style={{ fontSize: '11px', fontWeight: 700, color: '#374151' }}>{biz.google_rating}</span><span style={{ fontSize: '10px', color: '#94a3b8' }}>({biz.google_review_count?.toLocaleString()})</span><img src='https://www.google.com/favicon.ico' alt='G' style={{ width: '10px', height: '10px', borderRadius: '2px' }} /></div>)}</div>
+
                     {biz.is_verified && <CheckCircle size={15} color='#0f3460' fill='#0f3460' />}
                   </div>
                   {biz.description && <p style={{ fontSize: '13px', color: '#64748b', margin: 0, lineHeight: 1.5 }}>{biz.description}</p>}
