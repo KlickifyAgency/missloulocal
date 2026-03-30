@@ -139,10 +139,12 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
           </div>
         </div>
 
-        <div style={{ marginTop: '16px', backgroundColor: '#f0f9ff', borderRadius: '16px', padding: '16px', border: '1px solid #bae6fd', textAlign: 'center' }}>
-          <p style={{ fontSize: '13px', color: '#0369a1', margin: '0 0 8px' }}>Is this your business?</p>
-          <Link href={'/?claim=' + biz.slug} style={{ fontSize: '14px', fontWeight: 700, color: '#0369a1', textDecoration: 'none' }}>Claim this listing for free →</Link>
-        </div>
+        {!biz.is_verified && (
+          <div style={{ marginTop: '16px', backgroundColor: '#f0f9ff', borderRadius: '16px', padding: '16px', border: '1px solid #bae6fd', textAlign: 'center' }}>
+            <p style={{ fontSize: '13px', color: '#0369a1', margin: '0 0 8px' }}>Is this your business?</p>
+            <Link href={'/?claim=' + biz.slug} style={{ fontSize: '14px', fontWeight: 700, color: '#0369a1', textDecoration: 'none' }}>Claim this listing for free →</Link>
+          </div>
+        )}
       </div>
       <BottomNav />
     </div>
