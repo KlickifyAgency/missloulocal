@@ -53,7 +53,16 @@ export async function POST(request: NextRequest) {
           <div style="text-align:center;margin:0 0 24px">
             <a href="${verifyUrl}" style="display:inline-block;background:#e94560;color:white;padding:16px 32px;border-radius:12px;text-decoration:none;font-weight:700;font-size:16px">Verify My Listing</a>
           </div>
-          <p style="color:#94a3b8;font-size:13px;margin:0">If you did not request this, you can safely ignore this email.</p>
+          <p style="color:#94a3b8;font-size:13px;margin:0 0 24px">If you did not request this, you can safely ignore this email.</p>
+          <div style="background:#f8fafc;border-radius:12px;padding:20px;border:1px solid #e2e8f0;margin-top:8px">
+            <p style="color:#0f172a;font-weight:700;font-size:14px;margin:0 0 8px">Claiming your listing protects your business!</p>
+            <p style="color:#64748b;font-size:13px;line-height:1.6;margin:0 0 12px">This is one more layer of protection to ensure no one else can claim what is yours. Only verified owners can update their listing information.</p>
+            <p style="color:#0f172a;font-weight:600;font-size:13px;margin:0 0 8px">Know other local business owners?</p>
+            <p style="color:#64748b;font-size:13px;line-height:1.6;margin:0">Please share MissLouLocal with friends, family and neighbors who have a business. Help us build the most complete local directory in Natchez & the Miss-Lou area — completely free!</p>
+            <div style="text-align:center;margin-top:16px">
+              <a href="https://www.missloulocal.com" style="display:inline-block;background:#0f3460;color:white;padding:12px 24px;border-radius:10px;text-decoration:none;font-weight:600;font-size:13px">Visit MissLouLocal</a>
+            </div>
+          </div>
         </div>
         <p style="color:#94a3b8;font-size:12px;text-align:center;margin-top:16px">Questions? <a href="mailto:support@klickifyagency.com" style="color:#0f3460">support@klickifyagency.com</a></p>
       </div>
