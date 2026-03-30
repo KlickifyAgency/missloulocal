@@ -3,6 +3,7 @@ import { DM_Sans, DM_Serif_Display } from 'next/font/google'
 import './globals.css'
 import InstallBanner from '@/components/pwa/InstallBanner'
 import RegisterSW from '@/components/pwa/RegisterSW'
+import PushNotifications from '@/components/pwa/PushNotifications'
 import { Analytics } from '@vercel/analytics/react'
 import { GoogleAnalytics } from '@next/third-parties/google'
 
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {children}
         <InstallBanner />
         <RegisterSW />
+        <PushNotifications />
         <Analytics />
         <GoogleAnalytics gaId="G-X98NNEKHKV" />
       </body>
