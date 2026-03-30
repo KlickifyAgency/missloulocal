@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     .from('businesses')
     .select('*, categories(slug, name, color)')
     .eq('is_active', true)
-    .ilike('name', '%' + q + '%')
+    .or('name.ilike.%' + q + '%,description.ilike.%' + q + '%')
     .order('tier', { ascending: false })
     .limit(30)
 
