@@ -152,7 +152,7 @@ export default function CategoryPage() {
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px', flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', display: 'block' }}>{biz.name}</span>
+                    <a href={'/business/' + biz.slug} style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', display: 'block', textDecoration: 'none' }}>{biz.name}</a>
                   {biz.google_rating && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '3px' }}>
                       <span style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 700 }}>{'★'.repeat(Math.round(biz.google_rating))}</span>
