@@ -127,6 +127,13 @@ export default function CategoryPage() {
                 </div>
                 <div style={{ flex: 1 }}>
                   <h2 style={{ fontSize: '20px', fontWeight: 800, color: 'white', margin: '0 0 6px', lineHeight: 1.2 }}>{biz.name}</h2>
+                  {biz.google_rating && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '6px' }}>
+                      <span style={{ fontSize: '13px', color: '#fbbf24', fontWeight: 700 }}>{'★'.repeat(Math.round(biz.google_rating))} {biz.google_rating}</span>
+                      <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>({biz.google_review_count?.toLocaleString()} Google reviews)</span>
+                      <img src='https://www.google.com/favicon.ico' alt='G' style={{ width: '12px', height: '12px', borderRadius: '2px' }} />
+                    </div>
+                  )}
                   {biz.description && <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.7)', margin: 0, lineHeight: 1.6 }}>{biz.description}</p>}
                 </div>
               </div>
