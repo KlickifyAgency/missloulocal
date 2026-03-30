@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
 
   // Notify admin
   await resend.emails.send({
-    from: 'MissLouLocal <noreply@klickifyagency.com>',
+    from: 'MissLouLocal <onboarding@resend.dev>',
     to: 'support@klickifyagency.com',
     subject: (type === 'lost' ? '🐾 Lost Pet Reported' : '🐾 Found Pet Reported') + ' — MissLouLocal',
     html: `<div style="font-family:sans-serif;padding:20px;max-width:600px">

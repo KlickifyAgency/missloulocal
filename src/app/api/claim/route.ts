@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
   const verifyUrl = `https://www.missloulocal.com/api/claim/verify?token=${claim.verification_token}`
 
   await resend.emails.send({
-    from: 'MissLouLocal <onboarding@resend.dev>',
+    from: 'MissLouLocal <noreply@klickifyagency.com>',
     to: owner_email,
     subject: 'Verify your business listing — MissLouLocal',
     html: `
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
   }).catch(console.error)
 
   await resend.emails.send({
-    from: 'MissLouLocal <onboarding@resend.dev>',
+    from: 'MissLouLocal <noreply@klickifyagency.com>',
     to: 'support@klickifyagency.com',
     subject: '🏪 New Claim Request — ' + business_name,
     html: `<div style="font-family:sans-serif;padding:20px"><h2>New Claim Request</h2><p><strong>Business:</strong> ${business_name}</p><p><strong>Owner:</strong> ${owner_name}</p><p><strong>Email:</strong> ${owner_email}</p><p><strong>Phone:</strong> ${owner_phone || 'Not provided'}</p></div>`

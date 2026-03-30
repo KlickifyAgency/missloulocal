@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
   }
 
   await resend.emails.send({
-    from: 'MissLouLocal <onboarding@resend.dev>',
+    from: 'MissLouLocal <noreply@klickifyagency.com>',
     to: owner_email,
     subject: 'Someone has information about your pet — MissLouLocal',
     html: `

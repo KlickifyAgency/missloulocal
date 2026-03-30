@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
   })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   await resend.emails.send({
-    from: 'MissLouLocal <onboarding@resend.dev>',
+    from: 'MissLouLocal <noreply@klickifyagency.com>',
     to: 'support@klickifyagency.com',
     subject: 'New Yard Sale Posted — MissLouLocal',
     html: `<div style="font-family:sans-serif;padding:20px"><h2>New Yard Sale</h2><p><strong>Address:</strong> ${address}</p><p><strong>Date:</strong> ${sale_date}</p><p><strong>Contact:</strong> ${contact_name} — ${contact_email}</p></div>`

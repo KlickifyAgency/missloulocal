@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
 
   // Send email notification
   await resend.emails.send({
-    from: 'MissLouLocal <onboarding@resend.dev>',
+    from: 'MissLouLocal <noreply@klickifyagency.com>',
     to: 'support@klickifyagency.com',
     subject: '🎁 New Deal Submission — ' + business_name,
     html: `

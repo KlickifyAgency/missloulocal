@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
   })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   await resend.emails.send({
-    from: 'MissLouLocal <onboarding@resend.dev>',
+    from: 'MissLouLocal <noreply@klickifyagency.com>',
     to: 'support@klickifyagency.com',
     subject: 'New Farmers Market Vendor — MissLouLocal',
     html: `<div style="font-family:sans-serif;padding:20px"><h2 style="color:#65a30d">New Vendor Submission</h2><p><strong>Vendor:</strong> ${vendor_name}</p><p><strong>Products:</strong> ${products || 'Not specified'}</p><p><strong>Market Days:</strong> ${market_days || 'Not specified'}</p><p><strong>Contact:</strong> ${contact_name} — ${contact_email}</p><a href="https://www.missloulocal.com/admin" style="background:#65a30d;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block;margin-top:16px">Review in Admin Panel</a></div>`
