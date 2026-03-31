@@ -1,4 +1,5 @@
 'use client'
+import { useState, useEffect } from 'react'
 import { Search, MapPin, Tag, CalendarDays } from 'lucide-react'
 import {
   Wrench, UtensilsCrossed, HeartPulse, Car, ShoppingBag,
@@ -29,6 +30,10 @@ const categories = [
 ]
 
 export default function HomePage() {
+  const [bizCount, setBizCount] = useState<number | null>(null)
+  useEffect(() => {
+    fetch('/api/businesses/count').then(r => r.json()).then(d => setBizCount(d.count)).catch(() => {})
+  }, [])
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', paddingBottom: '80px' }}>
       <style>{'@keyframes pulse-blue{0%,100%{box-shadow:0 8px 24px rgba(30,64,175,0.35),0 0 0 0 rgba(30,64,175,0.4)}50%{box-shadow:0 8px 40px rgba(30,64,175,0.75),0 0 0 8px rgba(30,64,175,0)}}'}</style>
@@ -42,6 +47,11 @@ export default function HomePage() {
           <Search size={20} strokeWidth={2} color='white' style={{ flexShrink: 0 }} />
           <span>Search businesses...</span>
         </Link>
+        {bizCount && (
+          <p style={{ textAlign: 'center', fontSize: '13px', color: 'rgba(255,255,255,0.8)', margin: '10px 0 0' }}>
+            <span style={{ color: '#4ade80', fontWeight: 700 }}>{bizCount.toLocaleString()}</span> local businesses & growing 🌱
+          </p>
+        )}
         {bizCount && (
           <p style={{ textAlign: 'center', fontSize: '13px', color: 'rgba(255,255,255,0.8)', margin: '10px 0 0' }}>
             <span style={{ color: '#4ade80', fontWeight: 700 }}>{bizCount.toLocaleString()}</span> local businesses & growing 🌱
