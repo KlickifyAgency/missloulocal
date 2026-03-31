@@ -48,15 +48,12 @@ export default function HomePage() {
           <span>Search businesses...</span>
         </Link>
         {bizCount && (
-          <p style={{ textAlign: 'center', fontSize: '13px', color: 'rgba(255,255,255,0.8)', margin: '10px 0 0' }}>
-            <span style={{ color: '#4ade80', fontWeight: 700 }}>{bizCount.toLocaleString()}</span> local businesses & growing 🌱
+          <p style={{ textAlign: 'center', fontSize: '13px', color: 'rgba(255,255,255,0.65)', margin: '10px 0 0', letterSpacing: '0.3px' }}>
+            <span style={{ color: '#4ade80', fontWeight: 700 }}>{bizCount.toLocaleString()}</span> local businesses listed
           </p>
         )}
-        {bizCount && (
-          <p style={{ textAlign: 'center', fontSize: '13px', color: 'rgba(255,255,255,0.8)', margin: '10px 0 0' }}>
-            <span style={{ color: '#4ade80', fontWeight: 700 }}>{bizCount.toLocaleString()}</span> local businesses & growing 🌱
-          </p>
-        )}
+
+
       </div>
 
       <div style={{ padding: '20px 20px 0', display: 'flex', gap: '12px' }}>
