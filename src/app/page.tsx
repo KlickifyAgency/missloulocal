@@ -4,7 +4,7 @@ import {
   Wrench, UtensilsCrossed, HeartPulse, Car, ShoppingBag,
   Scissors, Scale, Building2, Church,
   Palette, Compass, PawPrint, Footprints, ShoppingBasket, Heart, ShoppingCart,
-  Dumbbell, Cross, Pill
+  Dumbbell, Ribbon, Pill
 } from 'lucide-react'
 import Link from 'next/link'
 import BottomNav from '@/components/layout/BottomNav'
@@ -27,7 +27,7 @@ const categories = [
   { name: 'Arts & Education',     slug: 'arts-education',      icon: Palette,         color: '#f59e0b', bg: '#fffbeb' },
   { name: 'Tours & Attractions',  slug: 'tours-attractions',   icon: Compass,         color: '#0369a1', bg: '#e0f2fe' },
   { name: 'Pet Services',         slug: 'pet-services',        icon: PawPrint,        color: '#d97706', bg: '#fffbeb' },
-  { name: 'Funeral Services',     slug: 'funeral-services',    icon: Cross,           color: '#6b7280', bg: '#f9fafb' },
+  { name: 'Funeral Services',     slug: 'funeral-services',    icon: Ribbon,           color: '#6b7280', bg: '#f9fafb' },
   { name: 'Pharmacy',             slug: 'pharmacy',            icon: Pill,            color: '#0891b2', bg: '#ecfeff' },
 ]
 

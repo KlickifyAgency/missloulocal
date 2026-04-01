@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowLeft, Dumbbell, Cross, Pill } from 'lucide-react'
+import { ArrowLeft, Dumbbell, Ribbon, Pill } from 'lucide-react'
 import {
   Wrench, UtensilsCrossed, HeartPulse, Car, ShoppingBag,
   Scissors, Scale, Building2, Stethoscope, Church,
@@ -17,7 +17,7 @@ const categories = [
   { name: 'Legal & Financial',    slug: 'legal-financial',     icon: Scale,           color: '#0891b2', bg: '#ecfeff' },
   { name: 'Real Estate & Hotels', slug: 'real-estate-hotels',  icon: Building2,       color: '#ea580c', bg: '#fff7ed' },
   { name: 'Fitness & Wellness',   slug: 'fitness-wellness',    icon: Dumbbell,        color: '#f97316', bg: '#fff7ed' },
-  { name: 'Funeral Services',     slug: 'funeral-services',    icon: Cross,           color: '#6b7280', bg: '#f9fafb' },
+  { name: 'Funeral Services',     slug: 'funeral-services',    icon: Ribbon,           color: '#6b7280', bg: '#f9fafb' },
   { name: 'Pharmacy',             slug: 'pharmacy',            icon: Pill,            color: '#0891b2', bg: '#ecfeff' },
   { name: 'Churches & Faith',     slug: 'churches-faith',      icon: Church,          color: '#7c3aed', bg: '#faf5ff' },
   { name: 'Arts & Education',     slug: 'arts-education',      icon: Palette,         color: '#f59e0b', bg: '#fffbeb' },
