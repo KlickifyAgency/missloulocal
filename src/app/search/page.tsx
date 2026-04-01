@@ -97,7 +97,7 @@ export default function SearchPage() {
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px', flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a' }}>{biz.name}</span>
+                    <Link href={'/business/' + biz.slug} style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', textDecoration: 'none' }}>{biz.name}</Link>
                     {biz.is_verified && <CheckCircle size={15} color='#0f3460' fill='#0f3460' />}
                   </div>
                   {biz.categories?.name && <span style={{ fontSize: '12px', color: catColor.color, fontWeight: 600, backgroundColor: catColor.bg, padding: '2px 8px', borderRadius: '20px' }}>{biz.categories.name}</span>}
