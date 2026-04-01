@@ -121,6 +121,13 @@ export default function CategoryPage() {
                 </div>
                 {biz.is_verified && <CheckCircle size={16} color='#4ade80' fill='#4ade80' />}
               </div>
+              {biz.photos && biz.photos.length > 0 && (
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '4px', borderRadius: '12px', overflow: 'hidden', height: '140px' }}>
+                  {biz.photos.slice(0, 3).map((photo: string, i: number) => (
+                    <img key={i} src={photo} alt={biz.name} style={{ flex: 1, objectFit: 'cover', minWidth: 0 }} />
+                  ))}
+                </div>
+              )}
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
                 <div style={{ width: '56px', height: '56px', backgroundColor: 'rgba(255,255,255,0.12)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '1px solid rgba(255,255,255,0.2)' }}>
                   <Icon size={28} color='white' strokeWidth={1.6} />
