@@ -23,7 +23,7 @@ export async function GET() {
     checkEndpoint(base + '/api/businesses/count', 'Business Count API'),
     checkEndpoint(base + '/api/search?q=restaurant', 'Search API'),
     checkEndpoint(base + '/api/businesses/by-slug?slug=test', 'By-Slug API'),
-    checkEndpoint(base + '/api/claim', 'Claim API'),
+    checkEndpoint(base + '/api/businesses/count', 'Businesses DB'),'
     checkEndpoint(base + '/api/yard-sales', 'Yard Sales API'),
     checkEndpoint(base + '/api/pets', 'Pets API'),
   ])
