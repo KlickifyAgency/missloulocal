@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { X, Building2, Phone, Mail, User, CheckCircle, Shield } from 'lucide-react'
+import { X, Building2, Phone, Mail, User, CheckCircle, Shield, Camera } from 'lucide-react'
 
 interface Props {
   businessId: string
@@ -12,6 +12,30 @@ export default function ClaimModal({ businessId, businessName, onClose }: Props)
   const [form, setForm] = useState({ owner_name: '', owner_email: '', owner_phone: '' })
   const [status, setStatus] = useState<'idle'|'loading'|'success'|'error'>('idle')
   const [error, setError] = useState('')
+  const [photo, setPhoto] = useState<File | null>(null)
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null)
+  const [photoUploading, setPhotoUploading] = useState(false)
+  const [photoUploaded, setPhotoUploaded] = useState(false)
+
+  function handlePhoto(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setPhoto(file)
+    setPhotoPreview(URL.createObjectURL(file))
+  }
+
+  async function uploadPhoto(bizId: string) {
+    if (!photo) return
+    setPhotoUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', photo)
+      fd.append('businessId', bizId)
+      await fetch('/api/businesses/upload-photo', { method: 'POST', body: fd })
+      setPhotoUploaded(true)
+    } catch(e) {}
+    setPhotoUploading(false)
+  }
 
   function update(field: string, value: string) { setForm(prev => ({ ...prev, [field]: value })) }
 
@@ -58,6 +82,17 @@ export default function ClaimModal({ businessId, businessName, onClose }: Props)
             </div>
             <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#0f172a', margin: '0 0 8px' }}>Check your email!</h3>
             <p style={{ fontSize: '14px', color: '#64748b', margin: '0 0 20px', lineHeight: 1.6 }}>We sent a verification link to <strong>{form.owner_email}</strong>. Click it to activate your listing.</p>
+            <div style={{ backgroundColor: '#f8fafc', borderRadius: '12px', padding: '16px', marginBottom: '16px', border: '1px solid #e2e8f0' }}>
+              <p style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a', margin: '0 0 10px' }}>📸 Add a photo to your listing</p>
+              {photoPreview && <img src={photoPreview} alt='preview' style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: '10px', marginBottom: '10px' }} />}
+              <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', backgroundColor: photoUploaded ? '#16a34a' : '#0f3460', color: 'white', borderRadius: '10px', padding: '12px', cursor: 'pointer', fontSize: '14px', fontWeight: 600 }}>
+                <Camera size={16} />
+                {photoUploaded ? '✅ Photo uploaded!' : photoUploading ? 'Uploading...' : 'Choose a photo (optional)'}
+                <input type='file' accept='image/*' onChange={handlePhoto} style={{ display: 'none' }} />
+              </label>
+              {photo && !photoUploaded && <button onClick={() => uploadPhoto(businessId)} disabled={photoUploading} style={{ width: '100%', marginTop: '8px', height: '40px', minHeight: 0, backgroundColor: '#e94560', border: 'none', borderRadius: '10px', color: 'white', fontSize: '14px', fontWeight: 700, cursor: 'pointer' }}>Upload Photo</button>}
+              <p style={{ fontSize: '11px', color: '#94a3b8', margin: '8px 0 0', textAlign: 'center' }}>Free listings include 1 photo</p>
+            </div>
             <button onClick={onClose} style={{ height: '48px', minHeight: 0, backgroundColor: '#0f3460', border: 'none', borderRadius: '12px', color: 'white', fontSize: '15px', fontWeight: 700, cursor: 'pointer', width: '100%' }}>Done</button>
           </div>
         ) : (
