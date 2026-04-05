@@ -233,7 +233,7 @@ export default function FindMyPetPage() {
             {post.image_url && (
             <div style={{ position: 'relative', height: '260px', overflow: 'hidden', backgroundColor: '#000' }}>
               <img src={post.image_url} alt='' style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'blur(20px)', transform: 'scale(1.1)', opacity: 0.6 }} />
-              <img src={post.image_url} alt={post.pet_name || post.pet_type} style={{ position: 'relative', width: '100%', height: '100%', objectFit: 'contain', zIndex: 1 }} />
+              <img src={post.image_url} alt={post.pet_name || post.pet_type} style={{ position: 'relative', width: '100%', height: '100%', objectFit: 'cover', zIndex: 1 }} />
             </div>
           )}
             <div style={{ padding: '14px 16px' }}>
