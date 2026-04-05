@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     // Check tier - free gets 1 photo only
     const { data: biz } = await supabase
       .from('businesses')
-      .select('tier, photo_url')
+      .select('tier, photo_url, photos')
       .eq('id', businessId)
       .single()
 
