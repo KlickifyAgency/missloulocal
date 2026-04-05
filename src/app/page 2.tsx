@@ -1,13 +1,10 @@
 'use client'
-import { useState, useEffect, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
-import ClaimModal from '@/components/claim/ClaimModal'
 import { Search, MapPin, Tag, CalendarDays } from 'lucide-react'
 import {
   Wrench, UtensilsCrossed, HeartPulse, Car, ShoppingBag,
   Scissors, Scale, Building2, Church,
   Palette, Compass, PawPrint, Footprints, ShoppingBasket, Heart, ShoppingCart,
-  Dumbbell, Ribbon, Pill
+  Dumbbell, Cross, Pill
 } from 'lucide-react'
 import Link from 'next/link'
 import BottomNav from '@/components/layout/BottomNav'
@@ -30,27 +27,12 @@ const categories = [
   { name: 'Arts & Education',     slug: 'arts-education',      icon: Palette,         color: '#f59e0b', bg: '#fffbeb' },
   { name: 'Tours & Attractions',  slug: 'tours-attractions',   icon: Compass,         color: '#0369a1', bg: '#e0f2fe' },
   { name: 'Pet Services',         slug: 'pet-services',        icon: PawPrint,        color: '#d97706', bg: '#fffbeb' },
-  { name: 'Funeral Services',     slug: 'funeral-services',    icon: Ribbon,           color: '#6b7280', bg: '#f9fafb' },
+  { name: 'Funeral Services',     slug: 'funeral-services',    icon: Cross,           color: '#6b7280', bg: '#f9fafb' },
   { name: 'Pharmacy',             slug: 'pharmacy',            icon: Pill,            color: '#0891b2', bg: '#ecfeff' },
 ]
 
-function HomeContent() {
-  const searchParams = useSearchParams()
-  const claimSlug = searchParams.get('claim')
-  const [claimBiz, setClaimBiz] = useState<{id: string, name: string} | null>(null)
-
-  useEffect(() => {
-    if (claimSlug) {
-      fetch('/api/businesses/by-slug?slug=' + claimSlug)
-        .then(r => r.json())
-        .then(d => { if (d.id) setClaimBiz({ id: d.id, name: d.name }) })
-        .catch(() => {})
-    }
-  }, [claimSlug])
-
+export default function HomePage() {
   return (
-    <>
-    {claimBiz && <ClaimModal businessId={claimBiz.id} businessName={claimBiz.name} onClose={() => setClaimBiz(null)} />}
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', paddingBottom: '80px' }}>
       <style>{'@keyframes pulse-blue{0%,100%{box-shadow:0 8px 24px rgba(30,64,175,0.35),0 0 0 0 rgba(30,64,175,0.4)}50%{box-shadow:0 8px 40px rgba(30,64,175,0.75),0 0 0 8px rgba(30,64,175,0)}}'}</style>
       <header style={{ backgroundColor: 'transparent', padding: '0 20px', height: '0px', position: 'absolute', top: 0, left: 0, right: 0, zIndex: 50 }}></header>
@@ -135,14 +117,5 @@ function HomeContent() {
       </div>
       <BottomNav />
     </div>
-    </>
-  )
-}
-
-export default function HomePage() {
-  return (
-    <Suspense fallback={null}>
-      <HomeContent />
-    </Suspense>
   )
 }
