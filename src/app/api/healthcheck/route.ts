@@ -9,12 +9,16 @@ const supabase = createClient(
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 async function checkEndpoint(url: string, name: string) {
-  try {
-    const res = await fetch(url, { signal: AbortSignal.timeout(5000) })
-    return { name, ok: res.ok, status: res.status }
-  } catch(e: any) {
-    return { name, ok: false, status: 0, error: e.message }
+  for (let i = 0; i < 2; i++) {
+    try {
+      const res = await fetch(url, { signal: AbortSignal.timeout(8000) })
+      return { name, ok: res.ok, status: res.status }
+    } catch(e: any) {
+      if (i === 1) return { name, ok: false, status: 0, error: e.message }
+      await new Promise(r => setTimeout(r, 2000))
+    }
   }
+  return { name, ok: false, status: 0 }
 }
 
 export async function GET() {
