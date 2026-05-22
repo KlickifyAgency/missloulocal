@@ -1,27 +1,54 @@
-import { createClient } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, Calendar, ExternalLink } from 'lucide-react'
 import BottomNav from '@/components/layout/BottomNav'
+import { promises as fs } from 'fs'
+import path from 'path'
 
 export const revalidate = 3600
 
 type Section = { heading: string; body: string }
 type FAQ     = { q: string; a: string }
+type Article = {
+  slug: string; title: string; h1: string; meta_description: string
+  intro: string; sections: Section[]; faqs: FAQ[]; keywords: string[]
+  topic_category: string; published_at: string
+}
+
+async function getArticle(slug: string): Promise<Article | null> {
+  try {
+    const filePath = path.join(process.cwd(), 'src/app/articles/data', slug + '.json')
+    const raw = await fs.readFile(filePath, 'utf-8')
+    return JSON.parse(raw)
+  } catch {
+    return null
+  }
+}
+
+async function getAllSlugs(): Promise<string[]> {
+  try {
+    const dir = path.join(process.cwd(), 'src/app/articles/data')
+    const files = await fs.readdir(dir)
+    return files.filter(f => f.endsWith('.json') && f !== 'index.json').map(f => f.replace('.json', ''))
+  } catch {
+    return []
+  }
+}
+
+export async function generateStaticParams() {
+  const slugs = await getAllSlugs()
+  return slugs.map(slug => ({ slug }))
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } }
-  )
-  const { data: a } = await supabase.from('articles').select('title, meta_description, slug').eq('slug', slug).single()
+  const a = await getArticle(slug)
   if (!a) return { title: 'Article Not Found' }
   return {
     title: a.title,
     description: a.meta_description,
+    keywords: (a.keywords ?? []).join(', '),
     alternates: { canonical: 'https://www.missloulocal.com/articles/' + a.slug },
     openGraph: {
       title: a.title,
@@ -36,24 +63,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } }
-  )
-
-  const { data: a } = await supabase
-    .from('articles')
-    .select('*')
-    .eq('slug', slug)
-    .single()
-
+  const a = await getArticle(slug)
   if (!a) notFound()
 
-  const sections: Section[] = a.sections ?? []
-  const faqs: FAQ[]         = a.faqs ?? []
-  const keywords: string[]  = a.keywords ?? []
-  const published           = new Date(a.published_at)
+  const published = new Date(a.published_at)
 
   const articleLd = {
     '@context': 'https://schema.org',
@@ -63,16 +76,16 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     url: 'https://www.missloulocal.com/articles/' + slug,
     datePublished: published.toISOString(),
     dateModified: published.toISOString(),
-    keywords: keywords.join(', '),
+    keywords: (a.keywords ?? []).join(', '),
     author: { '@type': 'Organization', name: 'MissLouLocal', url: 'https://www.missloulocal.com' },
     publisher: { '@type': 'Organization', name: 'MissLouLocal', url: 'https://www.missloulocal.com' },
     mainEntityOfPage: { '@type': 'WebPage', '@id': 'https://www.missloulocal.com/articles/' + slug },
   }
 
-  const faqLd = faqs.length ? {
+  const faqLd = a.faqs?.length ? {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: faqs.map(f => ({
+    mainEntity: a.faqs.map(f => ({
       '@type': 'Question',
       name: f.q,
       acceptedAnswer: { '@type': 'Answer', text: f.a },
@@ -118,7 +131,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           {a.intro}
         </p>
 
-        {sections.map((section, i) => (
+        {(a.sections ?? []).map((section, i) => (
           <section key={i} style={{ marginBottom: '32px' }}>
             <h2 style={{ fontSize: '19px', fontWeight: 700, color: '#0f172a', margin: '0 0 12px', paddingBottom: '8px', borderBottom: '1px solid #e2e8f0' }}>{section.heading}</h2>
             <p style={{ fontSize: '15px', color: '#334155', lineHeight: 1.75, margin: 0 }}>{section.body}</p>
@@ -134,13 +147,13 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           </Link>
         </div>
 
-        {faqs.length > 0 && (
+        {a.faqs?.length > 0 && (
           <section style={{ marginBottom: '32px' }}>
             <h2 style={{ fontSize: '19px', fontWeight: 700, color: '#0f172a', margin: '0 0 16px', paddingBottom: '8px', borderBottom: '1px solid #e2e8f0' }}>
               Frequently Asked Questions
             </h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {faqs.map((faq, i) => (
+              {a.faqs.map((faq, i) => (
                 <div key={i} style={{ backgroundColor: 'white', borderRadius: '14px', padding: '16px 18px', border: '1px solid #e2e8f0' }}>
                   <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', margin: '0 0 8px' }}>{faq.q}</h3>
                   <p style={{ fontSize: '14px', color: '#475569', margin: 0, lineHeight: 1.65 }}>{faq.a}</p>

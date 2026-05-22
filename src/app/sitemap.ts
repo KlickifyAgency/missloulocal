@@ -1,6 +1,8 @@
 import { MetadataRoute } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import { GUIDES } from '@/lib/guides'
+import { promises as fs } from 'fs'
+import path from 'path'
 
 const BASE = 'https://www.missloulocal.com'
 
@@ -60,14 +62,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.85,
   }))
 
-  const { data: articleRows } = await supabase
-    .from('articles')
-    .select('slug, published_at')
-    .order('published_at', { ascending: false })
+  let articleIndex: { slug: string; published_at: string }[] = []
+  try {
+    const indexPath = path.join(process.cwd(), 'src/app/articles/data/index.json')
+    articleIndex = JSON.parse(await fs.readFile(indexPath, 'utf-8'))
+  } catch {}
 
   const articlePages: MetadataRoute.Sitemap = [
     { url: BASE + '/articles', lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
-    ...(articleRows ?? []).map(a => ({
+    ...articleIndex.map(a => ({
       url: BASE + '/articles/' + a.slug,
       lastModified: new Date(a.published_at),
       changeFrequency: 'monthly' as const,

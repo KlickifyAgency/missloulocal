@@ -1,14 +1,15 @@
-import { createClient } from '@supabase/supabase-js'
 import { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowLeft, BookOpen, ChevronRight, Calendar } from 'lucide-react'
+import { ArrowLeft, BookOpen, ChevronRight, Calendar, Newspaper } from 'lucide-react'
 import BottomNav from '@/components/layout/BottomNav'
+import { promises as fs } from 'fs'
+import path from 'path'
 
-export const revalidate = 3600
+export const revalidate = 300
 
 export const metadata: Metadata = {
   title: 'Local Articles — Natchez, MS | MissLouLocal',
-  description: 'In-depth local articles about Natchez, MS — history, food, attractions, living, and more. Updated weekly by MissLouLocal.',
+  description: 'In-depth local articles about Natchez, MS — history, food, attractions, living, and more. New article every Friday.',
   alternates: { canonical: 'https://www.missloulocal.com/articles' },
   openGraph: {
     title: 'Local Articles — Natchez, MS | MissLouLocal',
@@ -20,6 +21,15 @@ export const metadata: Metadata = {
   },
 }
 
+type ArticleIndex = {
+  slug: string
+  title: string
+  h1: string
+  meta_description: string
+  topic_category: string
+  published_at: string
+}
+
 const categoryColors: Record<string, { color: string; bg: string; label: string }> = {
   tourism:  { color: '#0369a1', bg: '#e0f2fe', label: 'Tourism' },
   food:     { color: '#dc2626', bg: '#fef2f2', label: 'Food & Drink' },
@@ -29,20 +39,18 @@ const categoryColors: Record<string, { color: string; bg: string; label: string 
   outdoors: { color: '#65a30d', bg: '#f7fee7', label: 'Outdoors' },
 }
 
+async function getArticleIndex(): Promise<ArticleIndex[]> {
+  try {
+    const indexPath = path.join(process.cwd(), 'src/app/articles/data/index.json')
+    const raw = await fs.readFile(indexPath, 'utf-8')
+    return JSON.parse(raw)
+  } catch {
+    return []
+  }
+}
+
 export default async function ArticlesPage() {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } }
-  )
-
-  const { data: articles } = await supabase
-    .from('articles')
-    .select('slug, title, h1, meta_description, topic_category, published_at')
-    .order('published_at', { ascending: false })
-    .limit(50)
-
-  const list = articles ?? []
+  const list = await getArticleIndex()
 
   const breadcrumbLd = {
     '@context': 'https://schema.org',
@@ -66,17 +74,20 @@ export default async function ArticlesPage() {
 
       <div style={{ padding: '28px 20px 0' }}>
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+          <div style={{ width: '60px', height: '60px', backgroundColor: '#fdf2f8', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', border: '1px solid #f9a8d4' }}>
+            <Newspaper size={28} color='#db2777' strokeWidth={1.8} />
+          </div>
           <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#0f172a', margin: '0 0 8px' }}>Natchez, MS — Local Articles</h2>
           <p style={{ fontSize: '14px', color: '#64748b', margin: 0, lineHeight: 1.6 }}>
-            In-depth local content about Natchez and the Miss-Lou area — new article every week.
+            In-depth local content about Natchez and the Miss-Lou area — new article every Friday.
           </p>
         </div>
 
         {list.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '48px 20px', color: '#94a3b8' }}>
-            <BookOpen size={32} strokeWidth={1.5} style={{ marginBottom: '12px' }} />
-            <p style={{ fontSize: '16px', fontWeight: 600, color: '#334155', margin: '0 0 6px' }}>First article coming Friday</p>
-            <p style={{ fontSize: '14px', margin: 0 }}>New articles publish every week — check back soon.</p>
+          <div style={{ textAlign: 'center', padding: '48px 20px', backgroundColor: 'white', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+            <BookOpen size={32} color='#94a3b8' strokeWidth={1.5} style={{ marginBottom: '12px' }} />
+            <p style={{ fontSize: '16px', fontWeight: 700, color: '#334155', margin: '0 0 6px' }}>First article coming this Friday</p>
+            <p style={{ fontSize: '14px', color: '#64748b', margin: 0 }}>New articles publish every week — check back soon.</p>
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
