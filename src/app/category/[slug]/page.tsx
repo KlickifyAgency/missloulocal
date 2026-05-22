@@ -2,10 +2,30 @@ import { createClient } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowLeft, Phone, MapPin, Clock, CheckCircle, Star, Globe, Navigation } from 'lucide-react'
+import { ArrowLeft, Phone, MapPin, Clock, CheckCircle, Star, Globe, Navigation, BookOpen, ChevronRight } from 'lucide-react'
 import { Wrench, UtensilsCrossed, HeartPulse, Car, ShoppingBag, Scissors, Scale, Building2, Church, Palette, Compass, PawPrint, Footprints, ShoppingBasket, ShoppingCart, Heart, Dumbbell, Ribbon, Pill } from 'lucide-react'
 import BottomNav from '@/components/layout/BottomNav'
 import CategoryClaimButton from '@/components/category/CategoryClaimButton'
+
+const categoryToGuide: Record<string, { slug: string; title: string }> = {
+  'restaurants-food':   { slug: 'best-restaurants-natchez-ms',               title: 'Best Restaurants in Natchez, MS' },
+  'medical-health':     { slug: 'best-doctors-natchez-ms',                   title: 'Doctors & Medical Services in Natchez, MS' },
+  'home-services':      { slug: 'best-home-services-natchez-ms',             title: 'Home Services in Natchez, MS' },
+  'auto-services':      { slug: 'best-auto-repair-natchez-ms',               title: 'Best Auto Repair in Natchez, MS' },
+  'shopping-retail':    { slug: 'best-shopping-natchez-ms',                  title: 'Shopping in Natchez, MS' },
+  'personal-care':      { slug: 'best-hair-salons-natchez-ms',               title: 'Hair Salons & Personal Care in Natchez, MS' },
+  'legal-financial':    { slug: 'best-lawyers-financial-services-natchez-ms', title: 'Lawyers & Financial Services in Natchez, MS' },
+  'real-estate-hotels': { slug: 'best-hotels-real-estate-natchez-ms',        title: 'Hotels & Real Estate in Natchez, MS' },
+  'churches-faith':     { slug: 'churches-natchez-ms',                       title: 'Churches in Natchez, MS' },
+  'arts-education':     { slug: 'arts-education-natchez-ms',                 title: 'Arts & Education in Natchez, MS' },
+  'tours-attractions':  { slug: 'things-to-do-natchez-ms',                   title: 'Things To Do in Natchez, MS' },
+  'pet-services':       { slug: 'best-vets-pet-services-natchez-ms',         title: 'Vets & Pet Services in Natchez, MS' },
+  'walking-downtown':   { slug: 'walking-tour-downtown-natchez',             title: 'Walking Tour: Historic Downtown Natchez' },
+  'funeral-services':   { slug: 'funeral-homes-natchez-ms',                  title: 'Funeral Homes in Natchez, MS' },
+  'fitness-wellness':   { slug: 'best-gyms-fitness-natchez-ms',              title: 'Gyms & Fitness in Natchez, MS' },
+  'pharmacy':           { slug: 'pharmacies-natchez-ms',                     title: 'Pharmacies in Natchez, MS' },
+  'farmers-market':     { slug: 'natchez-farmers-market-guide',              title: 'Natchez Farmers Market Guide' },
+}
 
 const iconMap: Record<string, any> = {
   'restaurants-food': UtensilsCrossed, 'medical-health': HeartPulse, 'home-services': Wrench,
@@ -106,9 +126,21 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     })),
   }
 
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.missloulocal.com' },
+      { '@type': 'ListItem', position: 2, name: meta.name, item: 'https://www.missloulocal.com/category/' + slug },
+    ],
+  }
+
+  const relatedGuide = categoryToGuide[slug]
+
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', paddingBottom: '80px' }}>
       <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
 
       <header style={{ backgroundColor: isDowntown ? '#1e3a8a' : '#0f3460', padding: '0 20px', height: '64px', display: 'flex', alignItems: 'center', gap: '16px', position: 'sticky', top: 0, zIndex: 50 }}>
         <Link href='/' style={{ width: '40px', height: '40px', minHeight: 0, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -133,6 +165,19 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         <span style={{ fontSize: '14px', color: meta.color, fontWeight: 600 }}>{sorted.length} businesses listed</span>
         <span style={{ fontSize: '13px', color: '#64748b' }}>Natchez area</span>
       </div>
+
+      {relatedGuide && (
+        <div style={{ padding: '12px 20px 0' }}>
+          <Link href={'/guides/' + relatedGuide.slug} style={{ display: 'flex', alignItems: 'center', gap: '12px', backgroundColor: '#eff6ff', borderRadius: '14px', padding: '12px 14px', textDecoration: 'none', border: '1px solid #bfdbfe' }}>
+            <BookOpen size={18} color='#1e40af' strokeWidth={1.8} style={{ flexShrink: 0 }} />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: '11px', fontWeight: 700, color: '#1e40af', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '2px' }}>Local Guide</div>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: '#1e3a8a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{relatedGuide.title}</div>
+            </div>
+            <ChevronRight size={16} color='#93c5fd' strokeWidth={2} style={{ flexShrink: 0 }} />
+          </Link>
+        </div>
+      )}
 
       <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {sorted.length === 0 && (

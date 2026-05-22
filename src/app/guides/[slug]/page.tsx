@@ -91,6 +91,16 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
     })),
   }
 
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.missloulocal.com' },
+      { '@type': 'ListItem', position: 2, name: 'Local Guides', item: 'https://www.missloulocal.com/guides' },
+      { '@type': 'ListItem', position: 3, name: guide.h1, item: 'https://www.missloulocal.com/guides/' + slug },
+    ],
+  }
+
   const listLd = sorted.length ? {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
@@ -116,6 +126,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', paddingBottom: '80px' }}>
       <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }} />
       <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       {listLd && <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(listLd) }} />}
 
       <header style={{ backgroundColor: '#0f3460', padding: '0 20px', height: '64px', display: 'flex', alignItems: 'center', gap: '16px', position: 'sticky', top: 0, zIndex: 50 }}>

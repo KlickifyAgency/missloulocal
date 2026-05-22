@@ -52,9 +52,20 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
     ...(biz.latitude && { geo: { '@type': 'GeoCoordinates', latitude: biz.latitude, longitude: biz.longitude } }),
   }
 
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.missloulocal.com' },
+      ...(catSlug ? [{ '@type': 'ListItem', position: 2, name: catName, item: 'https://www.missloulocal.com/category/' + catSlug }] : []),
+      { '@type': 'ListItem', position: catSlug ? 3 : 2, name: biz.name, item: 'https://www.missloulocal.com/business/' + biz.slug },
+    ],
+  }
+
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', paddingBottom: '80px' }}>
       <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
 
       <header style={{ backgroundColor: '#0f3460', padding: '0 20px', height: '64px', display: 'flex', alignItems: 'center', gap: '16px', position: 'sticky', top: 0, zIndex: 50 }}>
         <Link href={catSlug ? '/category/' + catSlug : '/'} style={{ width: '40px', height: '40px', minHeight: 0, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
