@@ -1,1 +1,2 @@
 @AGENTS.md
+@GOLDEN_RULES.md

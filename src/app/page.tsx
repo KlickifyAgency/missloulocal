@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { Search, Tag, CalendarDays } from 'lucide-react'
+import { Search, Tag, CalendarDays, BookOpen, ChevronRight } from 'lucide-react'
 import {
   Wrench, UtensilsCrossed, HeartPulse, Car, ShoppingBag,
   Scissors, Scale, Building2, Church,
@@ -119,6 +119,20 @@ export default async function HomePage() {
               )
             })}
           </div>
+        </div>
+
+        <div style={{ padding: '24px 20px 0' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#0f172a', margin: '0 0 16px', textAlign: 'center' }}>Local Guides</h2>
+          <Link href='/guides' style={{ display: 'flex', alignItems: 'center', gap: '14px', backgroundColor: 'white', borderRadius: '16px', padding: '18px', textDecoration: 'none', border: '1px solid #e2e8f0', minHeight: 0, height: 'auto', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', marginBottom: '12px' }}>
+            <div style={{ width: '48px', height: '48px', backgroundColor: '#eff6ff', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '1px solid #bfdbfe' }}>
+              <BookOpen size={24} color='#1e40af' strokeWidth={1.8} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', marginBottom: '4px' }}>Natchez, MS Local Guides</div>
+              <div style={{ fontSize: '13px', color: '#64748b' }}>Best restaurants, things to do, walking tours & more</div>
+            </div>
+            <ChevronRight size={18} color='#cbd5e1' strokeWidth={2} style={{ flexShrink: 0 }} />
+          </Link>
         </div>
 
         <div style={{ padding: '24px 20px 0' }}>

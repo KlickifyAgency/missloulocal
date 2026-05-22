@@ -1,10 +1,12 @@
 import { MetadataRoute } from 'next'
 import { createClient } from '@supabase/supabase-js'
+import { GUIDES } from '@/lib/guides'
 
 const BASE = 'https://www.missloulocal.com'
 
 const STATIC_PAGES: MetadataRoute.Sitemap = [
   { url: BASE,                         lastModified: new Date(), changeFrequency: 'daily',   priority: 1.0 },
+  { url: BASE + '/guides',             lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.9 },
   { url: BASE + '/categories',         lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.9 },
   { url: BASE + '/deals',              lastModified: new Date(), changeFrequency: 'daily',   priority: 0.8 },
   { url: BASE + '/events',             lastModified: new Date(), changeFrequency: 'daily',   priority: 0.8 },
@@ -51,5 +53,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }))
 
-  return [...STATIC_PAGES, ...categoryPages, ...businessPages]
+  const guidePages: MetadataRoute.Sitemap = GUIDES.map(g => ({
+    url: BASE + '/guides/' + g.slug,
+    lastModified: new Date(g.publishedDate),
+    changeFrequency: 'monthly' as const,
+    priority: 0.85,
+  }))
+
+  return [...STATIC_PAGES, ...guidePages, ...categoryPages, ...businessPages]
 }
