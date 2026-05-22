@@ -60,5 +60,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.85,
   }))
 
-  return [...STATIC_PAGES, ...guidePages, ...categoryPages, ...businessPages]
+  const { data: articleRows } = await supabase
+    .from('articles')
+    .select('slug, published_at')
+    .order('published_at', { ascending: false })
+
+  const articlePages: MetadataRoute.Sitemap = [
+    { url: BASE + '/articles', lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
+    ...(articleRows ?? []).map(a => ({
+      url: BASE + '/articles/' + a.slug,
+      lastModified: new Date(a.published_at),
+      changeFrequency: 'monthly' as const,
+      priority: 0.75,
+    })),
+  ]
+
+  return [...STATIC_PAGES, ...guidePages, ...articlePages, ...categoryPages, ...businessPages]
 }

@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { Search, Tag, CalendarDays, BookOpen, ChevronRight, ArrowRight } from 'lucide-react'
+import { Search, Tag, CalendarDays, BookOpen, ChevronRight, ArrowRight, Newspaper } from 'lucide-react'
 import {
   Wrench, UtensilsCrossed, HeartPulse, Car, ShoppingBag,
   Scissors, Scale, Building2, Church,
@@ -147,6 +147,19 @@ export default async function HomePage() {
               </Link>
             ))}
           </div>
+        </div>
+
+        <div style={{ padding: '24px 20px 0' }}>
+          <Link href='/articles' style={{ display: 'flex', alignItems: 'center', gap: '14px', backgroundColor: 'white', borderRadius: '16px', padding: '16px', textDecoration: 'none', border: '1px solid #e2e8f0', minHeight: 0, height: 'auto', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', marginBottom: '12px' }}>
+            <div style={{ width: '44px', height: '44px', backgroundColor: '#fdf2f8', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '1px solid #f9a8d4' }}>
+              <Newspaper size={22} color='#db2777' strokeWidth={1.8} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', marginBottom: '3px' }}>Local Articles — Natchez, MS</div>
+              <div style={{ fontSize: '13px', color: '#64748b' }}>New article every Friday · History, food, living & more</div>
+            </div>
+            <ChevronRight size={18} color='#cbd5e1' strokeWidth={2} style={{ flexShrink: 0 }} />
+          </Link>
         </div>
 
         <div style={{ padding: '24px 20px 0' }}>
