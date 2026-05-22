@@ -11,8 +11,19 @@ const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-sans', weight: ['
 const dmSerifDisplay = DM_Serif_Display({ subsets: ['latin'], weight: '400', variable: '--font-display' })
 
 export const metadata: Metadata = {
-  title: 'MissLouLocal — Natchez & Miss-Lou Directory',
-  description: 'Find local businesses, services, restaurants, and events in Natchez and the Miss-Lou area.',
+  title: { default: 'MissLouLocal — Natchez, MS Local Business Directory', template: '%s | MissLouLocal' },
+  description: 'Find local businesses, restaurants, doctors, and services in Natchez, MS and the Miss-Lou area. 1,100+ businesses listed. Free to search.',
+  metadataBase: new URL('https://www.missloulocal.com'),
+  alternates: { canonical: 'https://www.missloulocal.com' },
+  openGraph: {
+    title: 'MissLouLocal — Natchez, MS Local Business Directory',
+    description: 'Find local businesses, restaurants, doctors, and services in Natchez, MS and the Miss-Lou area. 1,100+ businesses listed.',
+    url: 'https://www.missloulocal.com',
+    siteName: 'MissLouLocal',
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: { card: 'summary', title: 'MissLouLocal', description: 'Natchez, MS local business directory. 1,100+ businesses.' },
   appleWebApp: { capable: true, statusBarStyle: 'black-translucent', title: 'MissLouLocal' },
   icons: { apple: '/apple-touch-icon.png', icon: '/icon-192x192.png' },
   other: { 'mobile-web-app-capable': 'yes', 'theme-color': '#0f3460' },
