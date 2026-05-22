@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { Search, Tag, CalendarDays, BookOpen, ChevronRight } from 'lucide-react'
+import { Search, Tag, CalendarDays, BookOpen, ChevronRight, ArrowRight } from 'lucide-react'
 import {
   Wrench, UtensilsCrossed, HeartPulse, Car, ShoppingBag,
   Scissors, Scale, Building2, Church,
@@ -122,17 +122,31 @@ export default async function HomePage() {
         </div>
 
         <div style={{ padding: '24px 20px 0' }}>
-          <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#0f172a', margin: '0 0 16px', textAlign: 'center' }}>Local Guides</h2>
-          <Link href='/guides' style={{ display: 'flex', alignItems: 'center', gap: '14px', backgroundColor: 'white', borderRadius: '16px', padding: '18px', textDecoration: 'none', border: '1px solid #e2e8f0', minHeight: 0, height: 'auto', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', marginBottom: '12px' }}>
-            <div style={{ width: '48px', height: '48px', backgroundColor: '#eff6ff', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '1px solid #bfdbfe' }}>
-              <BookOpen size={24} color='#1e40af' strokeWidth={1.8} />
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', marginBottom: '4px' }}>Natchez, MS Local Guides</div>
-              <div style={{ fontSize: '13px', color: '#64748b' }}>Best restaurants, things to do, walking tours & more</div>
-            </div>
-            <ChevronRight size={18} color='#cbd5e1' strokeWidth={2} style={{ flexShrink: 0 }} />
-          </Link>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+            <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Local Guides</h2>
+            <Link href='/guides' style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', fontWeight: 600, color: '#e94560', textDecoration: 'none' }}>
+              All guides <ArrowRight size={14} strokeWidth={2.5} />
+            </Link>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {[
+              { href: '/guides/best-restaurants-natchez-ms', label: 'Best Restaurants in Natchez', sub: 'Where to eat in the Miss-Lou area', color: '#dc2626', bg: '#fef2f2' },
+              { href: '/guides/things-to-do-natchez-ms', label: 'Things To Do in Natchez', sub: 'Attractions, tours & historic sites', color: '#0369a1', bg: '#e0f2fe' },
+              { href: '/guides/walking-tour-downtown-natchez', label: 'Walking Tour: Downtown Natchez', sub: 'Everything within walking distance', color: '#1e40af', bg: '#eff6ff' },
+              { href: '/guides/best-doctors-natchez-ms', label: 'Doctors & Medical Services', sub: '200+ healthcare providers listed', color: '#16a34a', bg: '#f0fdf4' },
+            ].map(({ href, label, sub, color, bg }) => (
+              <Link key={href} href={href} style={{ display: 'flex', alignItems: 'center', gap: '12px', backgroundColor: 'white', borderRadius: '14px', padding: '14px', textDecoration: 'none', border: '1px solid #e2e8f0', minHeight: 0, height: 'auto', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+                <div style={{ width: '40px', height: '40px', backgroundColor: bg, borderRadius: '11px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <BookOpen size={20} color={color} strokeWidth={1.8} />
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', marginBottom: '2px' }}>{label}</div>
+                  <div style={{ fontSize: '12px', color: '#64748b' }}>{sub}</div>
+                </div>
+                <ChevronRight size={16} color='#cbd5e1' strokeWidth={2} style={{ flexShrink: 0 }} />
+              </Link>
+            ))}
+          </div>
         </div>
 
         <div style={{ padding: '24px 20px 0' }}>

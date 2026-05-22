@@ -19,12 +19,23 @@ export const metadata: Metadata = {
 }
 
 const guideColors: Record<string, { color: string; bg: string }> = {
-  'best-restaurants-natchez-ms':      { color: '#dc2626', bg: '#fef2f2' },
-  'things-to-do-natchez-ms':          { color: '#0369a1', bg: '#e0f2fe' },
-  'walking-tour-downtown-natchez':    { color: '#1e40af', bg: '#eff6ff' },
-  'best-doctors-natchez-ms':          { color: '#16a34a', bg: '#f0fdf4' },
-  'best-home-services-natchez-ms':    { color: '#2563eb', bg: '#eff6ff' },
-  'natchez-farmers-market-guide':     { color: '#65a30d', bg: '#f7fee7' },
+  'best-restaurants-natchez-ms':              { color: '#dc2626', bg: '#fef2f2' },
+  'things-to-do-natchez-ms':                  { color: '#0369a1', bg: '#e0f2fe' },
+  'walking-tour-downtown-natchez':            { color: '#1e40af', bg: '#eff6ff' },
+  'best-doctors-natchez-ms':                  { color: '#16a34a', bg: '#f0fdf4' },
+  'best-home-services-natchez-ms':            { color: '#2563eb', bg: '#eff6ff' },
+  'natchez-farmers-market-guide':             { color: '#65a30d', bg: '#f7fee7' },
+  'best-auto-repair-natchez-ms':              { color: '#475569', bg: '#f8fafc' },
+  'best-shopping-natchez-ms':                 { color: '#9333ea', bg: '#faf5ff' },
+  'best-hair-salons-natchez-ms':              { color: '#e11d48', bg: '#fff1f2' },
+  'best-lawyers-financial-services-natchez-ms': { color: '#0891b2', bg: '#ecfeff' },
+  'best-hotels-real-estate-natchez-ms':       { color: '#ea580c', bg: '#fff7ed' },
+  'churches-natchez-ms':                      { color: '#7c3aed', bg: '#faf5ff' },
+  'arts-education-natchez-ms':                { color: '#f59e0b', bg: '#fffbeb' },
+  'best-vets-pet-services-natchez-ms':        { color: '#d97706', bg: '#fffbeb' },
+  'funeral-homes-natchez-ms':                 { color: '#6b7280', bg: '#f9fafb' },
+  'best-gyms-fitness-natchez-ms':             { color: '#f97316', bg: '#fff7ed' },
+  'pharmacies-natchez-ms':                    { color: '#0891b2', bg: '#ecfeff' },
 }
 
 export default function GuidesIndexPage() {
