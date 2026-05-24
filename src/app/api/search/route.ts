@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
 export async function GET(request: NextRequest) {
-  const q = request.nextUrl.searchParams.get('q') ?? ''
+  const raw = request.nextUrl.searchParams.get('q') ?? ''
+  const q = raw.replace(/[^a-zA-Z0-9 '\-]/g, '').trim()
   if (!q || q.length < 2) return NextResponse.json([])
 
   const supabase = createClient(
@@ -14,7 +15,7 @@ export async function GET(request: NextRequest) {
     .from('businesses')
     .select('*, categories(slug, name, color)')
     .eq('is_active', true)
-    .or('name.ilike.%' + q + '%,description.ilike.%' + q + '%,address.ilike.%' + q + '%,keywords.ilike.%' + q + '%')
+    .or(`name.ilike.%${q}%,description.ilike.%${q}%,address.ilike.%${q}%,keywords.ilike.%${q}%`)
     .order('tier', { ascending: false })
     .limit(30)
 

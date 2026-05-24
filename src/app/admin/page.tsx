@@ -2,8 +2,6 @@
 import { useState, useEffect } from 'react'
 import { CheckCircle, XCircle, Eye, LogOut, Building2, Phone, Mail, MapPin, Globe, Clock, Tag, Download, Users, Star } from 'lucide-react'
 
-const ADMIN_PASSWORD = 'klickify2026'
-
 export default function AdminPage() {
   const [authed, setAuthed] = useState(false)
   const [password, setPassword] = useState('')
@@ -14,9 +12,19 @@ export default function AdminPage() {
   const [tab, setTab] = useState('pending')
   const [copied, setCopied] = useState(false)
 
-  function login() {
-    if (password === ADMIN_PASSWORD) { setAuthed(true); setPwError('') }
+  useEffect(() => {
+    fetch('/api/admin/auth').then(r => { if (r.ok) setAuthed(true) })
+  }, [])
+
+  async function login() {
+    const res = await fetch('/api/admin/auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) })
+    if (res.ok) { setAuthed(true); setPwError('') }
     else setPwError('Incorrect password')
+  }
+
+  async function logout() {
+    await fetch('/api/admin/auth', { method: 'DELETE' })
+    setAuthed(false)
   }
 
   async function loadData() {
@@ -79,7 +87,7 @@ export default function AdminPage() {
         <p style={{ fontSize: '14px', color: '#94a3b8', margin: '0 0 32px', fontWeight: 500 }}>Admin Panel</p>
         <input type='password' value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === 'Enter' && login()} placeholder='Enter admin password' style={{ width: '100%', height: '54px', borderRadius: '14px', border: '2px solid #e2e8f0', padding: '0 18px', fontSize: '17px', marginBottom: '12px', boxSizing: 'border-box' as const, outline: 'none', fontFamily: 'inherit' }} />
         {pwError && <p style={{ color: '#dc2626', fontSize: '14px', margin: '0 0 12px', fontWeight: 600 }}>{pwError}</p>}
-        <button onClick={login} style={{ width: '100%', height: '54px', background: 'linear-gradient(135deg, #e94560, #c73652)', borderRadius: '14px', border: 'none', color: 'white', fontSize: '17px', fontWeight: 700, cursor: 'pointer', minHeight: 0, boxShadow: '0 4px 16px rgba(233,69,96,0.35)' }}>Login</button>
+        <button type='button' onClick={login} style={{ width: '100%', height: '54px', background: 'linear-gradient(135deg, #e94560, #c73652)', borderRadius: '14px', border: 'none', color: 'white', fontSize: '17px', fontWeight: 700, cursor: 'pointer', minHeight: 0, boxShadow: '0 4px 16px rgba(233,69,96,0.35)' }}>Login</button>
       </div>
     </div>
   )
@@ -120,7 +128,7 @@ export default function AdminPage() {
             <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.45)' }}>MissLouLocal Directory</div>
           </div>
         </div>
-        <button onClick={() => setAuthed(false)} style={{ display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '10px', padding: '8px 14px', color: 'rgba(255,255,255,0.8)', fontSize: '13px', fontWeight: 600, cursor: 'pointer', minHeight: 0 }}>
+        <button type='button' onClick={logout} style={{ display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '10px', padding: '8px 14px', color: 'rgba(255,255,255,0.8)', fontSize: '13px', fontWeight: 600, cursor: 'pointer', minHeight: 0 }}>
           <LogOut size={14} /> Logout
         </button>
       </header>

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import webpush from 'web-push'
+import { isAdminAuthed } from '@/lib/admin-auth'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -14,6 +15,7 @@ webpush.setVapidDetails(
 )
 
 export async function POST(request: NextRequest) {
+  if (!isAdminAuthed(request)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   try {
     const { title, body, icon, url, topic } = await request.json()
     if (!title || !body) return NextResponse.json({ error: 'Title and body required' }, { status: 400 })
