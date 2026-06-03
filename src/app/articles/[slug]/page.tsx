@@ -134,7 +134,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
         {(a.sections ?? []).map((section, i) => (
           <section key={i} style={{ marginBottom: '32px' }}>
             <h2 style={{ fontSize: '19px', fontWeight: 700, color: '#0f172a', margin: '0 0 12px', paddingBottom: '8px', borderBottom: '1px solid #e2e8f0' }}>{section.heading}</h2>
-            <p style={{ fontSize: '15px', color: '#334155', lineHeight: 1.75, margin: 0 }}>{section.body}</p>
+            <div style={{ fontSize: '15px', color: '#334155', lineHeight: 1.75, margin: 0 }} dangerouslySetInnerHTML={{ __html: section.body }} />
           </section>
         ))}
 
