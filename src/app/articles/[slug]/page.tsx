@@ -156,7 +156,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               {a.faqs.map((faq, i) => (
                 <div key={i} style={{ backgroundColor: 'white', borderRadius: '14px', padding: '16px 18px', border: '1px solid #e2e8f0' }}>
                   <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', margin: '0 0 8px' }}>{faq.q}</h3>
-                  <p style={{ fontSize: '14px', color: '#475569', margin: 0, lineHeight: 1.65 }}>{faq.a}</p>
+                  <p style={{ fontSize: '14px', color: '#475569', margin: 0, lineHeight: 1.65 }} dangerouslySetInnerHTML={{ __html: faq.a }} />
                 </div>
               ))}
             </div>
