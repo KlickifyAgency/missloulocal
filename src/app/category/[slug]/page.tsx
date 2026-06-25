@@ -91,7 +91,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   const { data: businesses } = await supabase
     .from('businesses')
     .select('*')
-    .eq('category_id', categoryRow.id)
+    .or(`category_id.eq.${categoryRow.id},secondary_category_ids.cs.{${categoryRow.id}}`)
     .eq('is_active', true)
     .order('tier', { ascending: false })
     .order('name')
