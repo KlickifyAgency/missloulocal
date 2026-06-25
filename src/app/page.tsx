@@ -41,12 +41,14 @@ export default async function HomePage() {
   const { count } = await supabase.from('businesses').select('*', { count: 'exact', head: true }).eq('is_active', true)
   const bizCount = count ?? 1135
 
-  const { data: featuredBizList } = await supabase
+  const { data: rawFeatured } = await supabase
     .from('businesses')
     .select('id, name, slug, description, photos, photo_url, google_rating, google_review_count, categories(name, slug)')
     .eq('tier', 'premium')
     .eq('is_active', true)
     .order('name')
+  // Deduplicate by slug (same business can appear in multiple categories)
+  const featuredBizList = [...new Map((rawFeatured ?? []).map(b => [b.slug, b])).values()]
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -107,12 +109,12 @@ export default async function HomePage() {
                 <span style={{ fontSize: '11px', fontWeight: 800, color: 'white', textTransform: 'uppercase', letterSpacing: '1px' }}>Premium</span>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', padding: '4px 20px 12px', scrollbarWidth: 'none' }}>
-              <style>{'#featured-scroll::-webkit-scrollbar{display:none}'}</style>
+            <style>{'#featured-scroll::-webkit-scrollbar{display:none}'}</style>
+            <div id='featured-scroll' style={{ display: 'flex', gap: '12px', overflowX: 'auto', padding: '4px 20px 12px', scrollbarWidth: 'none' }}>
               {featuredBizList.map((biz: any) => {
                 const photo = biz.photos?.[0] ?? biz.photo_url ?? null
                 return (
-                  <Link key={biz.id} href={'/business/' + biz.slug} style={{ textDecoration: 'none', flexShrink: 0, width: '220px' }}>
+                  <Link key={biz.id} href={'/business/' + biz.slug} style={{ textDecoration: 'none', flexShrink: 0, width: '250px' }}>
                     <div style={{ background: 'linear-gradient(135deg, #0f3460 0%, #16213e 100%)', borderRadius: '18px', overflow: 'hidden', boxShadow: '0 6px 24px rgba(15,52,96,0.3)' }}>
                       {photo
                         ? <img src={photo} alt={biz.name} style={{ width: '100%', height: '120px', objectFit: 'cover', display: 'block' }} />
