@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
-import { ArrowLeft, Phone, MapPin, Search, Clock, CheckCircle, Navigation } from 'lucide-react'
+import { ArrowLeft, Phone, MapPin, Search, Clock, CheckCircle, Navigation, Star, Globe } from 'lucide-react'
 import { Wrench, UtensilsCrossed, HeartPulse, Church, Home, CalendarDays, Scale, Car, Scissors, PawPrint, Settings, ShoppingBag, Palette, Compass } from 'lucide-react'
 import Link from 'next/link'
 import BottomNav from '@/components/layout/BottomNav'
@@ -86,9 +86,50 @@ export default function SearchPage() {
         )}
 
         {results.map((biz: any) => {
+          const isPremium = biz.tier === 'premium'
           const slug = biz.categories?.slug ?? ''
           const catColor = categoryColors[slug] ?? { color: '#0f3460', bg: '#f1f5f9' }
           const Icon = iconMap[slug] ?? MapPin
+
+          if (isPremium) return (
+            <div key={biz.id} style={{ background: 'linear-gradient(135deg, #0f3460 0%, #16213e 100%)', borderRadius: '20px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '14px', boxShadow: '0 8px 32px rgba(15,52,96,0.25)', position: 'relative', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '100px', height: '100px', backgroundColor: '#e94560', borderRadius: '50%', opacity: 0.1 }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px', backgroundColor: '#e94560', borderRadius: '20px', padding: '4px 10px' }}>
+                  <Star size={11} color='white' fill='white' />
+                  <span style={{ fontSize: '11px', fontWeight: 800, color: 'white', textTransform: 'uppercase', letterSpacing: '1px' }}>Premium Listing</span>
+                </div>
+                {biz.is_verified && <CheckCircle size={16} color='#4ade80' fill='#4ade80' />}
+              </div>
+              {biz.photos && biz.photos.length > 0 && (
+                <div style={{ display: 'flex', gap: '8px', borderRadius: '12px', overflow: 'hidden', height: '140px' }}>
+                  {biz.photos.slice(0, 3).map((photo: string, i: number) => (
+                    <img key={i} src={photo} alt={biz.name} style={{ flex: 1, objectFit: 'cover', minWidth: 0 }} />
+                  ))}
+                </div>
+              )}
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
+                <div style={{ width: '56px', height: '56px', backgroundColor: 'rgba(255,255,255,0.12)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '1px solid rgba(255,255,255,0.2)' }}>
+                  <Icon size={28} color='white' strokeWidth={1.6} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <Link href={'/business/' + biz.slug} style={{ fontSize: '20px', fontWeight: 800, color: 'white', margin: '0 0 6px', lineHeight: 1.2, textDecoration: 'none', display: 'block' }}>{biz.name}</Link>
+                  {biz.google_rating && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '6px' }}>
+                      <span style={{ fontSize: '13px', color: '#fbbf24', fontWeight: 700 }}>{'★'.repeat(Math.round(biz.google_rating))} {biz.google_rating}</span>
+                      <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>({biz.google_review_count?.toLocaleString()} Google reviews)</span>
+                    </div>
+                  )}
+                  {biz.description && <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.7)', margin: 0, lineHeight: 1.6 }}>{biz.description}</p>}
+                </div>
+              </div>
+              {biz.address && <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><MapPin size={14} color='rgba(255,255,255,0.5)' strokeWidth={2} /><span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}>{biz.address}</span></div>}
+              {biz.phone && <a href={'tel:' + biz.phone} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', backgroundColor: '#e94560', borderRadius: '14px', height: '56px', minHeight: 0, color: 'white', fontSize: '18px', fontWeight: 800, textDecoration: 'none', width: '100%', boxShadow: '0 4px 16px rgba(233,69,96,0.4)' }}><Phone size={20} strokeWidth={2.5} />{biz.phone}</a>}
+              {biz.address && biz.latitude && biz.longitude && <button onClick={() => takeMeThere(biz.address)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: '14px', height: '46px', minHeight: 0, color: 'white', fontSize: '14px', fontWeight: 600, border: '1px solid rgba(255,255,255,0.2)', cursor: 'pointer', width: '100%' }}><Navigation size={16} strokeWidth={2} />Take Me There</button>}
+              {biz.website && <a href={biz.website} target='_blank' rel='noopener noreferrer' style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: '12px', height: '46px', minHeight: 0, color: 'white', fontSize: '14px', fontWeight: 600, textDecoration: 'none', width: '100%', border: '1px solid rgba(255,255,255,0.2)' }}><Globe size={16} strokeWidth={2} />Visit Website</a>}
+            </div>
+          )
+
           return (
             <div key={biz.id} style={{ backgroundColor: 'white', borderRadius: '16px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', border: '1px solid #f1f5f9' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
