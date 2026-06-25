@@ -103,7 +103,7 @@ export default async function HomePage() {
         {featuredBizList && featuredBizList.length > 0 && (
           <div style={{ padding: '24px 0 0' }}>
             <div style={{ padding: '0 20px', marginBottom: '14px' }}>
-              <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Featured Businesses</h2>
+              <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#0f172a', margin: 0, textAlign: 'center' }}>Featured Businesses</h2>
             </div>
             <style>{'#featured-scroll::-webkit-scrollbar{display:none}'}</style>
             <div id='featured-scroll' style={{ display: 'flex', gap: '12px', overflowX: 'auto', padding: '4px 20px 12px', scrollbarWidth: 'none' }}>
