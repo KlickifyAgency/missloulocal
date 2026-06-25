@@ -47,8 +47,8 @@ export default async function HomePage() {
     .eq('tier', 'premium')
     .eq('is_active', true)
     .order('name')
-  // Deduplicate by slug (same business can appear in multiple categories)
-  const featuredBizList = [...new Map((rawFeatured ?? []).map(b => [b.slug, b])).values()]
+  // Deduplicate by name (same business can have different slugs across categories)
+  const featuredBizList = [...new Map((rawFeatured ?? []).map(b => [b.name, b])).values()]
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -114,13 +114,13 @@ export default async function HomePage() {
               {featuredBizList.map((biz: any) => {
                 const photo = biz.photos?.[0] ?? biz.photo_url ?? null
                 return (
-                  <Link key={biz.id} href={'/business/' + biz.slug} style={{ textDecoration: 'none', flexShrink: 0, width: '250px' }}>
-                    <div style={{ background: 'linear-gradient(135deg, #0f3460 0%, #16213e 100%)', borderRadius: '18px', overflow: 'hidden', boxShadow: '0 6px 24px rgba(15,52,96,0.3)' }}>
+                  <Link key={biz.id} href={'/business/' + biz.slug} style={{ textDecoration: 'none', flexShrink: 0, width: '250px', height: '230px' }}>
+                    <div style={{ background: 'linear-gradient(135deg, #0f3460 0%, #16213e 100%)', borderRadius: '18px', overflow: 'hidden', boxShadow: '0 6px 24px rgba(15,52,96,0.3)', height: '100%', display: 'flex', flexDirection: 'column' }}>
                       {photo
-                        ? <img src={photo} alt={biz.name} style={{ width: '100%', height: '120px', objectFit: 'cover', display: 'block' }} />
-                        : <div style={{ width: '100%', height: '120px', backgroundColor: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Star size={32} color='rgba(255,255,255,0.2)' /></div>
+                        ? <img src={photo} alt={biz.name} style={{ width: '100%', height: '120px', objectFit: 'cover', display: 'block', flexShrink: 0 }} />
+                        : <div style={{ width: '100%', height: '120px', backgroundColor: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Star size={32} color='rgba(255,255,255,0.2)' /></div>
                       }
-                      <div style={{ padding: '12px 14px 14px' }}>
+                      <div style={{ padding: '12px 14px 14px', flex: 1, overflow: 'hidden' }}>
                         <div style={{ fontSize: '15px', fontWeight: 800, color: 'white', lineHeight: 1.2, marginBottom: '5px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical' }}>{biz.name}</div>
                         {biz.google_rating && (
                           <div style={{ fontSize: '12px', color: '#fbbf24', fontWeight: 700, marginBottom: '5px' }}>{'★'.repeat(Math.round(biz.google_rating))} {biz.google_rating}</div>
