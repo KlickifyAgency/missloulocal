@@ -102,12 +102,8 @@ export default async function HomePage() {
 
         {featuredBizList && featuredBizList.length > 0 && (
           <div style={{ padding: '24px 0 0' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', marginBottom: '14px' }}>
+            <div style={{ padding: '0 20px', marginBottom: '14px' }}>
               <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Featured Businesses</h2>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '5px', backgroundColor: '#e94560', borderRadius: '20px', padding: '3px 10px' }}>
-                <Star size={11} color='white' fill='white' />
-                <span style={{ fontSize: '11px', fontWeight: 800, color: 'white', textTransform: 'uppercase', letterSpacing: '1px' }}>Premium</span>
-              </div>
             </div>
             <style>{'#featured-scroll::-webkit-scrollbar{display:none}'}</style>
             <div id='featured-scroll' style={{ display: 'flex', gap: '12px', overflowX: 'auto', padding: '4px 20px 12px', scrollbarWidth: 'none' }}>
@@ -115,7 +111,11 @@ export default async function HomePage() {
                 const photo = biz.photos?.[0] ?? biz.photo_url ?? null
                 return (
                   <Link key={biz.id} href={'/business/' + biz.slug} style={{ textDecoration: 'none', flexShrink: 0, width: '250px', height: '230px' }}>
-                    <div style={{ background: 'linear-gradient(135deg, #0f3460 0%, #16213e 100%)', borderRadius: '18px', overflow: 'hidden', boxShadow: '0 6px 24px rgba(15,52,96,0.3)', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ background: 'linear-gradient(135deg, #0f3460 0%, #16213e 100%)', borderRadius: '18px', overflow: 'hidden', boxShadow: '0 6px 24px rgba(15,52,96,0.3)', height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                      <div style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 10, display: 'flex', alignItems: 'center', gap: '4px', backgroundColor: '#e94560', borderRadius: '20px', padding: '3px 8px' }}>
+                        <Star size={9} color='white' fill='white' />
+                        <span style={{ fontSize: '9px', fontWeight: 800, color: 'white', textTransform: 'uppercase', letterSpacing: '0.8px' }}>Premium</span>
+                      </div>
                       {photo
                         ? <img src={photo} alt={biz.name} style={{ width: '100%', height: '120px', objectFit: 'cover', display: 'block', flexShrink: 0 }} />
                         : <div style={{ width: '100%', height: '120px', backgroundColor: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Star size={32} color='rgba(255,255,255,0.2)' /></div>
