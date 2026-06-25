@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { Search, Tag, CalendarDays, BookOpen, ChevronRight, ArrowRight, Newspaper } from 'lucide-react'
+import { Search, Tag, CalendarDays, BookOpen, ChevronRight, ArrowRight, Newspaper, Star } from 'lucide-react'
 import {
   Wrench, UtensilsCrossed, HeartPulse, Car, ShoppingBag,
   Scissors, Scale, Building2, Church,
@@ -40,6 +40,13 @@ export default async function HomePage() {
   )
   const { count } = await supabase.from('businesses').select('*', { count: 'exact', head: true }).eq('is_active', true)
   const bizCount = count ?? 1135
+
+  const { data: featuredBizList } = await supabase
+    .from('businesses')
+    .select('id, name, slug, description, photos, photo_url, google_rating, google_review_count, categories(name, slug)')
+    .eq('tier', 'premium')
+    .eq('is_active', true)
+    .order('name')
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -90,6 +97,43 @@ export default async function HomePage() {
             </div>
           </Link>
         </div>
+
+        {featuredBizList && featuredBizList.length > 0 && (
+          <div style={{ padding: '24px 0 0' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', marginBottom: '14px' }}>
+              <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Featured Businesses</h2>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px', backgroundColor: '#e94560', borderRadius: '20px', padding: '3px 10px' }}>
+                <Star size={11} color='white' fill='white' />
+                <span style={{ fontSize: '11px', fontWeight: 800, color: 'white', textTransform: 'uppercase', letterSpacing: '1px' }}>Premium</span>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', padding: '4px 20px 12px', scrollbarWidth: 'none' }}>
+              <style>{'#featured-scroll::-webkit-scrollbar{display:none}'}</style>
+              {featuredBizList.map((biz: any) => {
+                const photo = biz.photos?.[0] ?? biz.photo_url ?? null
+                return (
+                  <Link key={biz.id} href={'/business/' + biz.slug} style={{ textDecoration: 'none', flexShrink: 0, width: '220px' }}>
+                    <div style={{ background: 'linear-gradient(135deg, #0f3460 0%, #16213e 100%)', borderRadius: '18px', overflow: 'hidden', boxShadow: '0 6px 24px rgba(15,52,96,0.3)' }}>
+                      {photo
+                        ? <img src={photo} alt={biz.name} style={{ width: '100%', height: '120px', objectFit: 'cover', display: 'block' }} />
+                        : <div style={{ width: '100%', height: '120px', backgroundColor: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Star size={32} color='rgba(255,255,255,0.2)' /></div>
+                      }
+                      <div style={{ padding: '12px 14px 14px' }}>
+                        <div style={{ fontSize: '15px', fontWeight: 800, color: 'white', lineHeight: 1.2, marginBottom: '5px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical' }}>{biz.name}</div>
+                        {biz.google_rating && (
+                          <div style={{ fontSize: '12px', color: '#fbbf24', fontWeight: 700, marginBottom: '5px' }}>{'★'.repeat(Math.round(biz.google_rating))} {biz.google_rating}</div>
+                        )}
+                        {biz.description && (
+                          <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.4, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{biz.description}</div>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         <div style={{ padding: '24px 20px 0' }}>
           <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#0f172a', margin: '0 0 16px', textAlign: 'center' }}>Browse by Category</h2>
