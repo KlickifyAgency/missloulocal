@@ -45,6 +45,26 @@
 - Validation gate added to `generate-article.js` (>=3 sections/FAQs/keywords, >=700 words,
   retry once) + failure alert email.
 
+### 4. Rotación de tokens GitHub (2026-09-06, cierre de sesión)
+GitHub secret scanning bloqueó 2 pushes -> había 2 tokens en texto plano.
+- **`CCVS`** (`ghp_BLZ4nF…`, cuenta **`gsmith0572-dot`**, NO gsmith0572 ni KlickifyAgency):
+  estaba hardcodeado en `generate-article.js:5` y en `SESSION_DIARY.md`. Scopes brutales
+  (`delete_repo`, `admin:org`, `admin:enterprise`) y **sin expiración**. **REVOCADO** — `401` verificado.
+- Token nuevo `missloulocal-cron-2026-09`, scope `repo` solo, expira **2027-09-06**.
+  Instalado en: `/home/missloulocal-crons/.env` (VPS), `~/.claude_env.sh:92` (Mac),
+  `.claude/settings.local.json` (Mac, 3 refs). Literal eliminado de `generate-article.js:5`
+  -> ahora `process.env.GITHUB_TOKEN`.
+- **Antes de revocar se escaneó TODO el VPS y el Mac.** Ningún cron de Rank & Rent /
+  VacaySmith / RKR Nexus lo usaba (esos van por `/etc/rkr-secrets.env`). Las ~35
+  coincidencias del VPS son pasivas: transcripts `.jsonl`, file-history, memory, diarios.
+- `gho_wGjYB7vZof…` del diario: **no existe**. `gh` CLI autentica por env var `GITHUB_TOKEN`.
+- OAuth Apps revocadas por George: apiyi-web, Product Hunt, Replicate (todas *Never used*).
+  Quedan: GitHub iOS, Supabase, Visual Studio Code.
+- Cron nuevo `30 7 * * 1 /usr/local/bin/gh_token_expiry_check.sh` — avisa por email 21 días
+  antes de que expire el token. Verificado: reporta 364 días.
+
+---
+
 ### Bugs hit while building (both fixed, then backstopped)
 - `grep -E` cannot parse `(?:` non-capturing groups — errored, returned 0 hits, guard
   printed "OK — no dead pins" while 4 crons were down. Scan rewritten in pure Python.
