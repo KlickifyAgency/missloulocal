@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { ArrowLeft, ShoppingBasket, Plus, X, CheckCircle, Phone, Mail, MapPin, Globe, Calendar } from 'lucide-react'
 import Link from 'next/link'
 import BottomNav from '@/components/layout/BottomNav'
+import { downscaleImage } from '@/lib/downscaleImage'
 
 function VendorForm({ onClose, onSuccess }: { onClose: () => void, onSuccess: () => void }) {
   const [form, setForm] = useState({ vendor_name: '', description: '', products: '', market_days: '', contact_name: '', contact_email: '', contact_phone: '', website: '', image_url: '' })
@@ -14,7 +15,7 @@ function VendorForm({ onClose, onSuccess }: { onClose: () => void, onSuccess: ()
     setUploading(true)
     try {
       const formData = new FormData()
-      formData.append('file', file)
+      formData.append('file', await downscaleImage(file))
       const res = await fetch('/api/farmers-market/upload', { method: 'POST', body: formData })
       const data = await res.json()
       if (data.url) { setForm(p => ({ ...p, image_url: data.url })); setPreview(data.url) }
