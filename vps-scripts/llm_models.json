@@ -1,0 +1,23 @@
+{
+  "_comment": "Single source of truth for LLM model selection. Crons read /etc/llm_models.resolved.json, never a hardcoded id. llm_model_guard.py resolves these candidates against each provider live model list daily and alerts if the preferred one disappears. anthropic_small role removed 2026-09-06: the only Anthropic consumer (backlink_scout.py) is on a frozen cron and no valid ANTHROPIC_API_KEY exists on this box.",
+  "roles": {
+    "groq_large": {
+      "provider": "groq",
+      "candidates": [
+        "openai/gpt-oss-120b",
+        "qwen/qwen3.8-27b",
+        "openai/gpt-oss-20b"
+      ],
+      "used_by": "long-form SEO articles (missloulocal generate-article.js, vacay_auto_blog.py, b2l_auto_blog.py)"
+    },
+    "groq_small": {
+      "provider": "groq",
+      "candidates": [
+        "openai/gpt-oss-20b",
+        "openai/gpt-oss-120b",
+        "qwen/qwen3.6-27b"
+      ],
+      "used_by": "short classification/summary calls (guru_monitor.py, vacay_goldmine.py, rkr_blog_common.py)"
+    }
+  }
+}
