@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { ArrowLeft, MapPin, Calendar, Clock, Plus, X, CheckCircle, Phone, Mail, ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
 import BottomNav from '@/components/layout/BottomNav'
+import { downscaleImage } from '@/lib/downscaleImage'
 
 function PostForm({ onClose, onSuccess }: { onClose: () => void, onSuccess: () => void }) {
   const [form, setForm] = useState({ title: '', description: '', address: '', sale_date: '', start_time: '7:00 AM', end_time: '1:00 PM', contact_name: '', contact_email: '', image_url: '' })
@@ -14,7 +15,7 @@ function PostForm({ onClose, onSuccess }: { onClose: () => void, onSuccess: () =
     setUploading(true)
     try {
       const formData = new FormData()
-      formData.append('file', file)
+      formData.append('file', await downscaleImage(file))
       const res = await fetch('/api/yard-sales/upload', { method: 'POST', body: formData })
       const data = await res.json()
       if (data.url) { setForm(p => ({ ...p, image_url: data.url })); setPreview(data.url) }
