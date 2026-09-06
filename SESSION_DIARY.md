@@ -134,6 +134,80 @@ now suppresses delivery; use it for every simulation.
 
 ---
 
+### 6. Egress de Supabase — quota excedido, causa encontrada y cortada
+**Disparador:** email de Supabase 2026-09-05 sin leer, "org gsmith0572-dot's Org exceeded its
+usage quota" (org `nfmjsbasjcldoqdfqchk`). Métrica: **cached egress > 5.5 GB**. Periodo actual
+perdonado, **Fair Use aplica desde 2026-10-06**, pueden restringir antes si sigue alto.
+
+**Causa medida:** las fotos salían crudas del Storage y **sin cachear**.
+- Home servía 3 PNG = **5,796 KB** para pintarlos en cards de 120 px de alto. ~970 visitas = 5.5 GB.
+- `cache-control: no-cache` + `cf-cache-status: MISS` en TODOS los objetos → cada visita re-baja
+  el archivo entero desde el origen. Ese era el multiplicador real, no el tamaño solo.
+- Cero uso de `next/image` en el repo, `next.config.ts` vacío, todo `<img src={photo}>`.
+
+**Hecho (todo verificado contra la URL pública):**
+- 13 objetos de `business-photos/listings` → WebP 900px q82: **17.1 MB → 0.93 MB (-94.6%)**.
+- 11 objetos referenciados de `pet-photos` → WebP: **21.4 MB → 1.18 MB (-94.5%)**. 14 huérfanos
+  sin referencia: NO convertidos, siguen ahí (cuestan storage, no egress).
+- DB repuntada: `businesses.photo_url`/`photos` (6 filas), `pet_posts.image_url` (10),
+  `farmers_market_vendors.image_url` (1). **Los PNG/JPG originales quedaron intactos en el
+  bucket** → rollback = revertir la DB, nada se borró.
+- **Verificado en vivo: home 5,796 KB → 124 KB (-97.9%)**, 0 PNG referenciados. `/api/pets`
+  devuelve 10/10 webp, ~1.0 MB total. Smoke 200 en `/`, `/find-my-pet`, `/yard-sales`,
+  `/farmers-market`.
+
+**Fix del origen (código, commit vía GitHub API + deploy hook):** `src/lib/downscaleImage.ts`
+— downscale a 900px + encode WebP **en el browser** antes de subir, con fallback al original si
+`createImageBitmap`/`toBlob` falla. Cableado en los 4 call sites de upload: `find-my-pet`,
+`yard-sales`, `farmers-market`, `ClaimModal`. Las 4 rutas de API derivan la extensión de
+`file.name`, así que reciben `photo.webp` sin tocarlas. `npm run build` exit 0 antes de pushear.
+
+**Dos cosas que descubrimos y no estaban documentadas:**
+- `cacheControl` en el upload **se guarda en la metadata pero Supabase devuelve `no-cache`
+  igual**, en el endpoint público Y en el autenticado. Probado con header `Cache-Control`,
+  header `cache-control: max-age=N` y campo multipart `cacheControl`. Los 3 ignorados. En free
+  no se puede arreglar desde el cliente.
+- **La home es estática.** No tiene `revalidate` ni `dynamic`, así que Next la hornea en build:
+  cambiar la DB no se ve hasta disparar el deploy hook. Aplica igual a listings premium nuevos.
+
+### 7. Ventas — verificado, MissLouLocal factura $0
+Cruzado Stripe (24 charges, 9 subs, 16 payment links) contra Supabase:
+- Los 3 premium (**Timothy Blalock, River City Diesel, Little Easy Tours**) tienen
+  `stripe_customer_id` y `stripe_subscription_id` **vacíos** → **cortesía, confirmado por 2 vías**.
+  Little Easy Tours paga $300/mo pero es *Google Ads Management (Christmas Pilgrimage)*, otro
+  producto. Cero subs de $47/mo o $67 en la cuenta.
+- **El link de $67 mostraba "Southern Lawns — Website Setup" en el checkout.** Tuvo 3 sessions
+  (2026-06-03 x2, 06-04), las 3 `expired unpaid` — justo las fechas de esos emails. Hubo interés
+  real y el checkout los recibió con el nombre de otro cliente. Los links de $47 y $25: 0 sessions
+  en la vida. George: "eso fue viejo, nunca pagaron" → **3 payment links `active=false` + 3
+  productos archivados**.
+- **The Nest**: es **ex-cliente en stand-by por impago**, servicio suspendido, no borrar porque
+  pueden volver. `tier: free` en DB es el estado correcto, no un bug. PENDING lo tenía mal como
+  "listing live en premium". El pitch a John Grady es **reactivación de churn**, no venta fría.
+  Ojo: hay duplicado `H. Hal Garner at Nest` con mismo teléfono y dirección.
+- Total real en DB: **1136 negocios** (el 1000 anterior era el límite default del REST).
+
+### 8. Inventario de plataforma (para decidir la migración)
+George preguntó si es el momento de salir de Supabase + Vercel y consolidar en el VPS.
+- **Vercel plan = `hobby`**, y sus docs dicen textual: *"Hobby teams are restricted to
+  non-commercial personal use only."* Hay **5 proyectos** en esa cuenta: `missloulocal`,
+  `truly-free-qr`, `truly-free-pdf-tools`, `truly-free-mortgage-calculator`,
+  `we-the-people-39120`. Los AdSense son comercial sin discusión. **Riesgo mayor que el quota
+  de Supabase** y no avisa con 30 días. Quedarse legal en la nube = $20 Vercel + $25 Supabase = $45/mo.
+- Los utility/AdSense sites **no** están en el VPS ni en Cloudflare Pages (0 proyectos) ni
+  Workers (solo `nexus-email-inbound` y `towers-review-feedback`, de RKR).
+- **VPS tiene lugar de sobra:** 2 vCPU, load 0.21, 7.8 GB RAM (1.7 en uso), 74 GB libres,
+  **Postgres 16.15 ya corriendo**, Node 22, PM2, 37 sites nginx, Docker, uptime 49 días.
+- **Acoplamiento a Supabase medido:** **0 llamadas reales de Auth** (los 28 hits eran
+  `auth: { persistSession }` en config), **0 Realtime, 0 RPC**, Storage solo 4 llamadas.
+  Lo único gordo son **67 `.from()`** en 30 archivos vía PostgREST.
+- Caminos: **A)** Supabase self-hosted en docker → supabase-js sigue igual, **cero reescritura**.
+  **B)** Postgres puro → reescribir 67 queries, sesión propia. Recomendado A primero.
+- Lo que se pierde: deploy automático + rollback de Vercel, aislamiento (un VPS caído se lleva
+  37 sites + MLL + 73 crons juntos), backups gestionados (hay que armar pg_dump + offsite).
+
+---
+
 ## SESSION 010 — 2026-06-25
 **Status:** Premium listings overhaul — fotos permanentes, Featured Businesses home page, multi-categorías, premium UI en todo el site, nuevo lead John Grady (The Nest).
 
