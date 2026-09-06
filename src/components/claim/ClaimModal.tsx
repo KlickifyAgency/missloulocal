@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { X, Building2, Phone, Mail, User, CheckCircle, Shield, Camera } from 'lucide-react'
+import { downscaleImage } from '@/lib/downscaleImage'
 
 interface Props {
   businessId: string
@@ -29,7 +30,7 @@ export default function ClaimModal({ businessId, businessName, onClose }: Props)
     setPhotoUploading(true)
     try {
       const fd = new FormData()
-      fd.append('file', photo)
+      fd.append('file', await downscaleImage(photo))
       fd.append('businessId', bizId)
       await fetch('/api/businesses/upload-photo', { method: 'POST', body: fd })
       setPhotoUploaded(true)
