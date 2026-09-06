@@ -15,17 +15,17 @@
 # 0 14 * * 1 /usr/local/bin/run_backlink_scout.sh
 0 16 * * 1,3,5 python3 /opt/rkr/scripts/fb_poster.py >> /tmp/fb_poster.log 2>&1
 # VacaySmith — Auto Blog (Friday 9:05am CT)
-5 14 * * 5 GROQ_API_KEY=<REDACTED_GROQ_KEY> python3 /usr/local/bin/vacay_auto_blog.py >> /var/log/vacay_blog.log 2>&1
+5 14 * * 5 set -a && . /etc/blog-secrets.env && set +a && python3 /usr/local/bin/vacay_auto_blog.py >> /var/log/vacay_blog.log 2>&1
 # Rank & Rent — Lead Follow-up Worker
 */30 * * * * . /etc/rkr-secrets.env && export $(grep -v '^#' /etc/rkr-secrets.env | xargs) && python3 /usr/local/bin/lead_followup.py >> /var/log/lead_followup.log 2>&1
 # Rank & Rent — Health Monitor (lead router + followup cron)
-*/5 * * * * . /etc/rkr-secrets.env && export NTFY_TOPIC=<REDACTED> && python3 /usr/local/bin/rkr_monitor.py >> /var/log/rkr_monitor.log 2>&1
+*/5 * * * * . /etc/rkr-secrets.env && . /etc/ntfy-topics.env && export NTFY_TOPIC="$NTFY_TOPIC_ALERTS" && python3 /usr/local/bin/rkr_monitor.py >> /var/log/rkr_monitor.log 2>&1
 # Rank & Rent — Weekly Lead Report (Viernes 2PM CT = 19:00 UTC)
 0 19 * * 5 /usr/local/bin/run_weekly_lead_report.sh
 # Rank & Rent — Indexability Guard FAST (daily 7AM CT = 12:00 UTC, no GSC quota)
-0 12 * * * . /etc/rkr-secrets.env 2>/dev/null; export NTFY_TOPIC=<REDACTED> && python3 /usr/local/bin/rkr_indexability_guard.py --fast >> /var/log/rkr_indexability_fast.log 2>&1
+0 12 * * * . /etc/rkr-secrets.env 2>/dev/null; . /etc/ntfy-topics.env && export NTFY_TOPIC="$NTFY_TOPIC_REPORTS" && python3 /usr/local/bin/rkr_indexability_guard.py --fast >> /var/log/rkr_indexability_fast.log 2>&1
 # Rank & Rent — Indexability Guard FULL/GSC (daily 8AM CT = 13:00 UTC, escalado de semanal 07-12: 2000/dia quota GSC de sobra)
-0 13 * * * . /etc/rkr-secrets.env 2>/dev/null; export NTFY_TOPIC=<REDACTED> && python3 /usr/local/bin/rkr_indexability_guard.py --full >> /var/log/rkr_indexability_full.log 2>&1
+0 13 * * * . /etc/rkr-secrets.env 2>/dev/null; . /etc/ntfy-topics.env && export NTFY_TOPIC="$NTFY_TOPIC_REPORTS" && python3 /usr/local/bin/rkr_indexability_guard.py --full >> /var/log/rkr_indexability_full.log 2>&1
 # RKR Nexus — Weekly Report (Viernes 9:30AM CT = 14:30 UTC)
 30 14 * * 5 /usr/local/bin/rkr-nexus report weekly >> /var/log/rkr_nexus_weekly.log 2>&1
 # RKR Nexus — B2B Reciprocal Outreach Daily (8:35AM CT = 13:35 UTC, added 2026-08-12)
@@ -42,35 +42,35 @@
 # Rank & Rent — ntfy Archive (cada 15 min, la cache de ntfy.sh expira en ~12-48h)
 */15 * * * * python3 /usr/local/bin/rkr_ntfy_archive.py >> /var/log/rkr_ntfy_archive.log 2>&1
 # VacaySmith — SERP + Map Pack Weekly Tracker (Lunes 8:20am CT = 13:20 UTC)
-20 13 * * 1 DATAFORSEO_API_LOGIN="george@vacaysmith.com" DATAFORSEO_API_PASSWORD="<REDACTED>" /usr/local/bin/run_vacay_serp_weekly.sh
+20 13 * * 1 . /etc/rkr-secrets.env 2>/dev/null && export DATAFORSEO_API_LOGIN DATAFORSEO_API_PASSWORD && /usr/local/bin/run_vacay_serp_weekly.sh
 # Rank & Rent — Outreach Autonomous Max (daily 12PM CT = 17:00 UTC, scoped to Hunter.io Starter month, resets 2026-08-17 — George approved no per-send approval 2026-07-17, REGLA 47 batch amendment)
 0 17 * * * /usr/local/bin/rkr_outreach_automax.sh >> /var/log/rkr_outreach_automax.log 2>&1
 # Rank & Rent — Link Audit (daily 6AM CT = 11:00 UTC, portfolio-wide broken internal link scan — added 2026-07-19 after P10/P11 crawl-budget incident, see GOLDEN_RULES REGLA 68)
-0 11 * * * . /etc/rkr-secrets.env 2>/dev/null; export NTFY_TOPIC=<REDACTED> && cd /opt/rkr-nexus && ./rkr-nexus linkaudit run >> /var/log/rkr_linkaudit.log 2>&1
+0 11 * * * . /etc/rkr-secrets.env 2>/dev/null; . /etc/ntfy-topics.env && export NTFY_TOPIC="$NTFY_TOPIC_REPORTS" && cd /opt/rkr-nexus && ./rkr-nexus linkaudit run >> /var/log/rkr_linkaudit.log 2>&1
 # Rank & Rent — Geo Audit (daily 6:15AM CT = 11:15 UTC, service-area claims vs real business location — added 2026-07-19, GOLDEN_RULES REGLA 69)
-15 11 * * * . /etc/rkr-secrets.env 2>/dev/null; export NTFY_TOPIC=<REDACTED> && cd /opt/rkr-nexus && ./rkr-nexus geoaudit run >> /var/log/rkr_geoaudit.log 2>&1
+15 11 * * * . /etc/rkr-secrets.env 2>/dev/null; . /etc/ntfy-topics.env && export NTFY_TOPIC="$NTFY_TOPIC_REPORTS" && cd /opt/rkr-nexus && ./rkr-nexus geoaudit run >> /var/log/rkr_geoaudit.log 2>&1
 # Rank & Rent — Site Audit (daily 6:30AM CT = 11:30 UTC, 72 checks/site: meta, schema, NAP, favicon, VPS services — added 2026-07-19, GOLDEN_RULES REGLA 70)
 30 11 * * * /usr/local/bin/rkr_site_audit_cron.sh
 # Rank & Rent — Goldmine Check (daily 6:35AM CT = 11:35 UTC, closes the loop: measures 14d position lift for gems past their window, verdict improved/flat/worse — was coded but never scheduled, 70 gems sat with 57 never measured; added 2026-07-28)
-35 11 * * * . /etc/rkr-secrets.env 2>/dev/null; export NTFY_TOPIC=<REDACTED> && cd /opt/rkr-nexus && ./rkr-nexus goldmine check >> /var/log/rkr_goldmine_check.log 2>&1
+35 11 * * * . /etc/rkr-secrets.env 2>/dev/null; . /etc/ntfy-topics.env && export NTFY_TOPIC="$NTFY_TOPIC_REPORTS" && cd /opt/rkr-nexus && ./rkr-nexus goldmine check >> /var/log/rkr_goldmine_check.log 2>&1
 # Rank & Rent — Off-VPS Backup (daily 6:45AM CT = 11:45 UTC, after linkaudit/geoaudit/site_audit — nexus.db+sites_registry.json+latest tarball/site to private GitHub, added 2026-07-19 per infra hardening report finding #1)
 45 11 * * * /usr/local/bin/rkr_offsite_backup.sh
 # Rank & Rent — Sibling Similarity Check (weekly Sunday 4PM CT = 21:00 UTC, cross-site duplicate content between siblings of the same niche template, added 2026-07-19)
 0 21 * * 0 /usr/local/bin/rkr_sibling_similarity_cron.sh
 # Rank & Rent — ntfy Daily Digest (7:45AM CT = 12:45 UTC, one summary of the last 24h instead of piecing together ~10 separate cron pings — real-time alerts from each script unchanged, added 2026-07-19)
-45 12 * * * . /etc/rkr-secrets.env 2>/dev/null; export NTFY_TOPIC=<REDACTED> && python3 /usr/local/bin/rkr_ntfy_daily_digest.py >> /var/log/rkr_ntfy_digest.log 2>&1
+45 12 * * * . /etc/rkr-secrets.env 2>/dev/null; . /etc/ntfy-topics.env && export NTFY_TOPIC="$NTFY_TOPIC_REPORTS" && python3 /usr/local/bin/rkr_ntfy_daily_digest.py >> /var/log/rkr_ntfy_digest.log 2>&1
 */5 * * * * /usr/bin/python3 /var/www/b2l_lead_router/reminder_check.py >> /var/www/b2l_lead_router/reminder.log 2>&1
 # Rank & Rent — AEO Compliance Guard (daily 7:15AM CT = 12:15 UTC, catches new/regressed FAQ schema+Content Capsule gaps on service pages, added 2026-07-26)
-15 12 * * * . /etc/rkr-secrets.env 2>/dev/null; export NTFY_TOPIC=<REDACTED> && python3 /usr/local/bin/rkr_aeo_compliance_guard.py >> /var/log/rkr_aeo_compliance.log 2>&1
+15 12 * * * . /etc/rkr-secrets.env 2>/dev/null; . /etc/ntfy-topics.env && export NTFY_TOPIC="$NTFY_TOPIC_REPORTS" && python3 /usr/local/bin/rkr_aeo_compliance_guard.py >> /var/log/rkr_aeo_compliance.log 2>&1
 # Rank & Rent — AI Overview Tracker (weekly Viernes 9:10AM CT = 14:10 UTC, DataForSEO recurring use authorized by George 2026-07-26, REGLA 67 amendment)
-10 14 * * 5 . /etc/rkr-secrets.env 2>/dev/null; export NTFY_TOPIC=<REDACTED> && python3 /usr/local/bin/rkr_ai_overview_tracker.py >> /var/log/rkr_ai_overview_tracker.log 2>&1
+10 14 * * 5 . /etc/rkr-secrets.env 2>/dev/null; . /etc/ntfy-topics.env && export NTFY_TOPIC="$NTFY_TOPIC_REPORTS" && python3 /usr/local/bin/rkr_ai_overview_tracker.py >> /var/log/rkr_ai_overview_tracker.log 2>&1
 
 # Rank & Rent — Goldmine Sweep DataForSEO+GSC (Viernes 6:00AM CT = 11:00 UTC, todos los proyectos:
 # descubre oportunidades reales pos 8-20 via DataForSEO ranked_keywords (search volume real, primario)
 # + GSC (secundario/fill-in), aplica 1 FAQ quirurgico por pagina, snapshot+CF purge+verify+indexing.
 # Evaluacion: reusa el goldmine check diario existente (11:35 UTC, mide a 14d) - no requiere cron nuevo.
 # Separado del goldmine check diario. Agregado 2026-07-31 a pedido de George.
-0 11 * * 5 . /etc/rkr-secrets.env 2>/dev/null; export NTFY_TOPIC=<REDACTED> && cd /opt/rkr-nexus && ./rkr-nexus goldmine all --dataforseo >> /var/log/rkr_goldmine_sweep.log 2>&1
+0 11 * * 5 . /etc/rkr-secrets.env 2>/dev/null; . /etc/ntfy-topics.env && export NTFY_TOPIC="$NTFY_TOPIC_REPORTS" && cd /opt/rkr-nexus && ./rkr-nexus goldmine all --dataforseo >> /var/log/rkr_goldmine_sweep.log 2>&1
 
 # VacaySmith — Goldmine Apply (Viernes 6:00AM CT = 11:00 UTC, unica y exclusivamente vacaysmith.com,
 # separado de cualquier proyecto hermano: DataForSEO propia cuenta george@vacaysmith.com (prioridad) +
@@ -85,7 +85,7 @@
 45 11 * * 5 /usr/local/bin/run_vacay_goldmine_check.sh
 0 6,12,18,0 * * * export $(cat /home/missloulocal-crons/.env | xargs) && node /home/missloulocal-crons/mll_fb_backfill.js >> /home/missloulocal-crons/mll_fb_backfill.log 2>&1
 # Rank & Rent — BBB Citation Check (daily 7:20AM CT = 12:20 UTC, multi-project, self-pruning per target, added 2026-08-03)
-20 12 * * * . /etc/rkr-secrets.env 2>/dev/null; export NTFY_TOPIC=<REDACTED> && python3 /usr/local/bin/rkr_bbb_citation_check.py >> /var/log/rkr_bbb_citation_check.log 2>&1
+20 12 * * * . /etc/rkr-secrets.env 2>/dev/null; . /etc/ntfy-topics.env && export NTFY_TOPIC="$NTFY_TOPIC_ALERTS" && python3 /usr/local/bin/rkr_bbb_citation_check.py >> /var/log/rkr_bbb_citation_check.log 2>&1
 
 # VacaySmith -- Indexability Guard FAST (daily 7:05am CT = 13:05 UTC, no GSC quota, added 2026-08-07)
 5 13 * * * python3 /usr/local/bin/vacay_indexability_guard.py --fast >> /var/log/vacay_indexability_fast.log 2>&1
@@ -93,52 +93,54 @@
 10 13 * * * python3 /usr/local/bin/vacay_indexability_guard.py --full >> /var/log/vacay_indexability_full.log 2>&1
 
 # Rank & Rent -- P03 Google Ads Biweekly Report (Viernes 9:25AM CT = 14:25 UTC, gated to fire ~every 14 days via internal state file -- $25/mo budget too small for weekly signal, added 2026-08-11)
-25 14 * * 5 . /etc/rkr-secrets.env 2>/dev/null; export NTFY_TOPIC=<REDACTED> && python3 /usr/local/bin/rkr_p03_gads_report.py >> /var/log/rkr_p03_gads_report.log 2>&1
+25 14 * * 5 . /etc/rkr-secrets.env 2>/dev/null; . /etc/ntfy-topics.env && export NTFY_TOPIC="$NTFY_TOPIC_REPORTS" && python3 /usr/local/bin/rkr_p03_gads_report.py >> /var/log/rkr_p03_gads_report.log 2>&1
 # Built To Last (b2lbuildings.com) -- Auto Blog (1st of month, 9am CT = 14:00 UTC, added 2026-08-13)
-0 14 1 * * . /etc/rkr-secrets.env && export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && GROQ_API_KEY=<REDACTED_GROQ_KEY> python3 /usr/local/bin/b2l_auto_blog.py >> /var/log/b2l_blog.log 2>&1
+0 14 1 * * . /etc/rkr-secrets.env && export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && set -a && . /etc/blog-secrets.env && set +a && python3 /usr/local/bin/b2l_auto_blog.py >> /var/log/b2l_blog.log 2>&1
 # Rank & Rent -- P03 Auto Blog (Viernes 9:35AM CT = 14:35 UTC, gated to fire ~every 14 days via internal state file -- 5 known content-gap topics, added 2026-08-14)
 35 14 * * 5 . /etc/rkr-secrets.env 2>/dev/null; export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && python3 /usr/local/bin/p03_auto_blog.py >> /var/log/p03_blog.log 2>&1
 # Rank & Rent -- P01 Auto Blog (Mon 9:00AM CT, gated ~14d, added 2026-08-14)
-0 14 * * 1 . /etc/rkr-secrets.env 2>/dev/null; export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && GROQ_API_KEY=<REDACTED_GROQ_KEY> python3 /usr/local/bin/p01_auto_blog.py >> /var/log/p01_blog.log 2>&1
+0 14 * * 1 . /etc/rkr-secrets.env 2>/dev/null; export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && set -a && . /etc/blog-secrets.env && set +a && python3 /usr/local/bin/p01_auto_blog.py >> /var/log/p01_blog.log 2>&1
 # Rank & Rent -- P02 Auto Blog (Mon 9:15AM CT, gated ~14d, added 2026-08-14)
-15 14 * * 1 . /etc/rkr-secrets.env 2>/dev/null; export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && GROQ_API_KEY=<REDACTED_GROQ_KEY> python3 /usr/local/bin/p02_auto_blog.py >> /var/log/p02_blog.log 2>&1
+15 14 * * 1 . /etc/rkr-secrets.env 2>/dev/null; export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && set -a && . /etc/blog-secrets.env && set +a && python3 /usr/local/bin/p02_auto_blog.py >> /var/log/p02_blog.log 2>&1
 # Rank & Rent -- P05 Auto Blog (Tue 9:00AM CT, gated ~14d, added 2026-08-14)
-0 14 * * 2 . /etc/rkr-secrets.env 2>/dev/null; export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && GROQ_API_KEY=<REDACTED_GROQ_KEY> python3 /usr/local/bin/p05_auto_blog.py >> /var/log/p05_blog.log 2>&1
+0 14 * * 2 . /etc/rkr-secrets.env 2>/dev/null; export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && set -a && . /etc/blog-secrets.env && set +a && python3 /usr/local/bin/p05_auto_blog.py >> /var/log/p05_blog.log 2>&1
 # Rank & Rent -- P06 Auto Blog (Tue 9:15AM CT, gated ~14d, added 2026-08-14)
-15 14 * * 2 . /etc/rkr-secrets.env 2>/dev/null; export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && GROQ_API_KEY=<REDACTED_GROQ_KEY> python3 /usr/local/bin/p06_auto_blog.py >> /var/log/p06_blog.log 2>&1
+15 14 * * 2 . /etc/rkr-secrets.env 2>/dev/null; export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && set -a && . /etc/blog-secrets.env && set +a && python3 /usr/local/bin/p06_auto_blog.py >> /var/log/p06_blog.log 2>&1
 # Rank & Rent -- P07 Auto Blog (Tue 9:30AM CT, gated ~14d, added 2026-08-14)
-30 14 * * 2 . /etc/rkr-secrets.env 2>/dev/null; export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && GROQ_API_KEY=<REDACTED_GROQ_KEY> python3 /usr/local/bin/p07_auto_blog.py >> /var/log/p07_blog.log 2>&1
+30 14 * * 2 . /etc/rkr-secrets.env 2>/dev/null; export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && set -a && . /etc/blog-secrets.env && set +a && python3 /usr/local/bin/p07_auto_blog.py >> /var/log/p07_blog.log 2>&1
 # Rank & Rent -- P04 Auto Blog (Wed 9:00AM CT, gated ~14d, added 2026-08-20 — was patched 2026-08-14 rollout but never scheduled)
-0 14 * * 3 . /etc/rkr-secrets.env 2>/dev/null; export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && GROQ_API_KEY=<REDACTED_GROQ_KEY> python3 /usr/local/bin/p04_auto_blog.py >> /var/log/p04_blog.log 2>&1
+0 14 * * 3 . /etc/rkr-secrets.env 2>/dev/null; export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && set -a && . /etc/blog-secrets.env && set +a && python3 /usr/local/bin/p04_auto_blog.py >> /var/log/p04_blog.log 2>&1
 # Rank & Rent -- P08 Auto Blog (Wed 9:15AM CT, gated ~14d, added 2026-08-20 — was patched 2026-08-14 rollout but never scheduled)
-15 14 * * 3 . /etc/rkr-secrets.env 2>/dev/null; export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && GROQ_API_KEY=<REDACTED_GROQ_KEY> python3 /usr/local/bin/p08_auto_blog.py >> /var/log/p08_blog.log 2>&1
+15 14 * * 3 . /etc/rkr-secrets.env 2>/dev/null; export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && set -a && . /etc/blog-secrets.env && set +a && python3 /usr/local/bin/p08_auto_blog.py >> /var/log/p08_blog.log 2>&1
 # Rank & Rent -- P10 Auto Blog (Wed 9:30AM CT, gated ~14d, added 2026-08-14)
-30 14 * * 3 . /etc/rkr-secrets.env 2>/dev/null; export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && GROQ_API_KEY=<REDACTED_GROQ_KEY> python3 /usr/local/bin/p10_auto_blog.py >> /var/log/p10_blog.log 2>&1
-*/15 * * * * . /etc/rkr-secrets.env && export NTFY_TOPIC=<REDACTED> && python3 /usr/local/bin/rkr_telnyx_e2e_guard.py >> /var/log/rkr_telnyx_e2e_guard.log 2>&1
+30 14 * * 3 . /etc/rkr-secrets.env 2>/dev/null; export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && set -a && . /etc/blog-secrets.env && set +a && python3 /usr/local/bin/p10_auto_blog.py >> /var/log/p10_blog.log 2>&1
+*/15 * * * * . /etc/rkr-secrets.env && . /etc/ntfy-topics.env && export NTFY_TOPIC="$NTFY_TOPIC_ALERTS" && python3 /usr/local/bin/rkr_telnyx_e2e_guard.py >> /var/log/rkr_telnyx_e2e_guard.log 2>&1
 # Rank & Rent — SMS admin command drain (every 2min, mitad 2 of SMS admin channel, added 2026-08-18 — gated on claude /login on VPS)
 */2 * * * * set -a; . /etc/rkr-secrets.env 2>/dev/null; set +a; /usr/bin/python3 /var/www/lead_router/sms_command_drain.py >> /var/log/sms_command_drain.log 2>&1
 # Towers of Natchez -- Monthly Website Report to Ginger/James (1st of month, 7am CT = 13:00 UTC)
-0 13 1 * * CF_EMAIL='gsmith0572@gmail.com' CF_GLOBAL_API_KEY='<REDACTED>' BREVO_API_KEY='<REDACTED>' GSC_OAUTH_CLIENT_ID='<REDACTED>.apps.googleusercontent.com' GSC_OAUTH_CLIENT_SECRET='<REDACTED>' GSC_OAUTH_REFRESH_TOKEN='1//<REDACTED>' GOOGLE_ADS_CLIENT_ID='<REDACTED>.apps.googleusercontent.com' <REDACTED>='<REDACTED>' <REDACTED>='1//<REDACTED>' <REDACTED>='lRuNVPuD35c1pWsAWnv5QA' python3 /usr/local/bin/<REDACTED>.py >> /var/log/vacay_towers_monthly.log 2>&1
+0 13 1 * * . /etc/rkr-secrets.env 2>/dev/null && export CF_EMAIL CF_GLOBAL_API_KEY BREVO_API_KEY GSC_OAUTH_CLIENT_ID GSC_OAUTH_CLIENT_SECRET GSC_OAUTH_REFRESH_TOKEN GOOGLE_ADS_CLIENT_ID GOOGLE_ADS_CLIENT_SECRET GOOGLE_ADS_REFRESH_TOKEN GOOGLE_ADS_DEVELOPER_TOKEN && python3 /usr/local/bin/vacay_towers_monthly_report.py >> /var/log/vacay_towers_monthly.log 2>&1
 
 # Rank & Rent — Broken-Link-Building Daily Scan (lychee, daily 6:50AM CT = 11:50 UTC, DRAFT-ONLY pending George review of first batch, added 2026-08-19)
-50 11 * * * . /etc/rkr-secrets.env 2>/dev/null; export NTFY_TOPIC=<REDACTED> && /usr/local/bin/rkr_linkscan_daily.sh >> /var/log/rkr_linkscan_daily.log 2>&1
+50 11 * * * . /etc/rkr-secrets.env 2>/dev/null; . /etc/ntfy-topics.env && export NTFY_TOPIC="$NTFY_TOPIC_REPORTS" && /usr/local/bin/rkr_linkscan_daily.sh >> /var/log/rkr_linkscan_daily.log 2>&1
 
 # Rank & Rent — YellowPages Prospecting Daily Scan (yp-scraper, daily 6:55AM CT = 11:55 UTC, DRAFT-ONLY pending George review of first batch, added 2026-08-19)
-55 11 * * * . /etc/rkr-secrets.env 2>/dev/null; export NTFY_TOPIC=<REDACTED> && /usr/local/bin/rkr_ypscrape_daily.sh >> /var/log/rkr_ypscrape_daily.log 2>&1
+55 11 * * * . /etc/rkr-secrets.env 2>/dev/null; . /etc/ntfy-topics.env && export NTFY_TOPIC="$NTFY_TOPIC_REPORTS" && /usr/local/bin/rkr_ypscrape_daily.sh >> /var/log/rkr_ypscrape_daily.log 2>&1
 
 # Rank & Rent -- P11 Auto Blog (Thu 9:00AM CT, gated ~14d, added 2026-08-20)
-0 14 * * 4 . /etc/rkr-secrets.env 2>/dev/null; export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && GROQ_API_KEY=<REDACTED_GROQ_KEY> python3 /usr/local/bin/p11_auto_blog.py >> /var/log/p11_blog.log 2>&1
+0 14 * * 4 . /etc/rkr-secrets.env 2>/dev/null; export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && set -a && . /etc/blog-secrets.env && set +a && python3 /usr/local/bin/p11_auto_blog.py >> /var/log/p11_blog.log 2>&1
 # Rank & Rent -- P12 Auto Blog (Thu 9:15AM CT, gated ~14d, added 2026-08-20)
-15 14 * * 4 . /etc/rkr-secrets.env 2>/dev/null; export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && GROQ_API_KEY=<REDACTED_GROQ_KEY> python3 /usr/local/bin/p12_auto_blog.py >> /var/log/p12_blog.log 2>&1
+15 14 * * 4 . /etc/rkr-secrets.env 2>/dev/null; export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && set -a && . /etc/blog-secrets.env && set +a && python3 /usr/local/bin/p12_auto_blog.py >> /var/log/p12_blog.log 2>&1
 # Rank & Rent -- P09 Auto Blog (Thu 9:30AM CT, gated ~14d, added 2026-08-20 — was patched 2026-08-14 rollout but never scheduled)
-30 14 * * 4 . /etc/rkr-secrets.env 2>/dev/null; export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && GROQ_API_KEY=<REDACTED_GROQ_KEY> python3 /usr/local/bin/p09_auto_blog.py >> /var/log/p09_blog.log 2>&1
+30 14 * * 4 . /etc/rkr-secrets.env 2>/dev/null; export $(grep -v "^#" /etc/rkr-secrets.env | xargs) && set -a && . /etc/blog-secrets.env && set +a && python3 /usr/local/bin/p09_auto_blog.py >> /var/log/p09_blog.log 2>&1
 */15 * * * * /usr/bin/python3 /usr/local/bin/rkr_p03_gads_budget_guard.py >> /var/log/rkr_p03_gads_budget_guard.log 2>&1
 # Rank & Rent — Lead Flow Sentinel (routing/cert/balance, 7:10AM CT)
-10 12 * * * set -a; . /etc/rkr-secrets.env; set +a; export NTFY_TOPIC=<REDACTED>; python3 /usr/local/bin/rkr_lead_flow_sentinel.py >> /var/log/rkr_lead_flow_sentinel.log 2>&1
+10 12 * * * set -a; . /etc/rkr-secrets.env; set +a; . /etc/ntfy-topics.env && export NTFY_TOPIC="$NTFY_TOPIC_ALERTS" ; python3 /usr/local/bin/rkr_lead_flow_sentinel.py >> /var/log/rkr_lead_flow_sentinel.log 2>&1
 # Rank & Rent -- GTM sweep: inyecta GTM en paginas nuevas creadas por generadores (blogs/service/SA), ntfy solo si encuentra algo (added 2026-09-03)
 25 17 * * * python3 /usr/local/bin/rkr_gtm_sweep.py >> /var/log/rkr_gtm_sweep.log 2>&1
-10 14 * * 5 GROQ_API_KEY=<REDACTED_GROQ_KEY> python3 /usr/local/bin/tom_auto_blog.py >> /var/log/tom_blog.log 2>&1
+10 14 * * 5 set -a && . /etc/blog-secrets.env && set +a && python3 /usr/local/bin/tom_auto_blog.py >> /var/log/tom_blog.log 2>&1
 # LLM Model Guard — resolves /etc/llm_models.resolved.json from each provider live
 # /models list and reports any script still pinned to a dead model. 7AM UTC, one
 # hour before the article cron, so a decommission is fixed before publish time.
 0 7 * * * python3 /usr/local/bin/llm_model_guard.py >> /var/log/llm_model_guard.log 2>&1
+# GitHub token expiry — avisa 21 dias antes (lunes 7:30 UTC)
+30 7 * * 1 /usr/local/bin/gh_token_expiry_check.sh >> /var/log/gh_token_expiry.log 2>&1
