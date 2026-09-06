@@ -91,6 +91,28 @@
 - `openai/gpt-oss-20b` es MUY débil para long-form (588 palabras/1 sección vs 1413/4 en `120b`)
 - **NUNCA** re-agregar `ANTHROPIC_API_KEY` ni llamadas a la API de Anthropic — pagamos Claude Pro
 
+## SECRETOS
+- **NUNCA** un secreto inline en el crontab. Cron corre `/bin/sh -c "<comando>"` → ese argv
+  lo ve `ps aux` de CUALQUIER usuario local mientras el job corre (`ubuntu`, `openclaw`,
+  `postgres`, `rkrsms` tienen shell en el VPS). Van a env file 0600
+- Env files: `/etc/rkr-secrets.env`, `/etc/vs-secrets.env`, `/etc/blog-secrets.env`
+  (Groq de blogs), `/etc/ntfy-topics.env`. Formato `KEY=value`, sin `export`
+- Al migrar: preservar la **precedencia** (los blogs pisan `GROQ_API_KEY` a propósito → el
+  archivo específico se sourcea DESPUÉS) y el **conector** (`&&` vs `;` cambia semántica de fallo)
+- Verificar var por var lo que recibe el proceso hijo, viejo vs nuevo, antes de declarar OK.
+  `vps-scripts/verify_cron_env.py`
+- Chequear permisos de los `.env`: uno en 0644 con service-role key es peor que el crontab
+  (legible siempre, no solo mientras corre el job)
+- **NUNCA** imprimir el VALOR de una credencial en chat, log, commit, diario o crontab.
+  Queda en el transcript para siempre. Usar nombres
+
+## CREDENCIALES — DÓNDE ESTÁN
+- `~/.claude_env.sh` (0600, 109 vars) es la fuente única del portafolio. Cloudflare, GSC,
+  Google Ads, GA4/GTM, Telnyx, DataForSEO, Stripe, VPS, todo
+- Hook global `~/.claude/scripts/creds_index.py` imprime el índice de nombres en cada sesión
+- **Prohibido decir "no tengo credenciales para X"** sin mirar el índice primero.
+  Fallback: `grep -oE '^[A-Z_]+=' ~/.claude_env.sh | grep -i <servicio>`
+
 ## MONITOREO / ALERTAS
 - El timeout del cliente SIEMPRE debe superar el peor caso del endpoint. `healthcheck.js` usa
   25s porque `route.ts` puede tardar 18s (6 sub-checks × 8s + retry de 2s)
