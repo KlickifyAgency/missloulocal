@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { ArrowLeft, PawPrint, Phone, Mail, MapPin, Heart, Search, Plus, X, CheckCircle, User, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
 import BottomNav from '@/components/layout/BottomNav'
+import { downscaleImage } from '@/lib/downscaleImage'
 
 const petTypes = ['Dog', 'Cat', 'Bird', 'Rabbit', 'Other']
 
@@ -67,7 +68,8 @@ function ReportForm({ onClose, onSuccess }: { onClose: () => void, onSuccess: ()
     setUploading(true)
     try {
       const formData = new FormData()
-      const f = file instanceof File ? file : new File([file], 'pet.jpg', { type: 'image/jpeg' })
+      const small = await downscaleImage(file)
+      const f = small instanceof File ? small : new File([small], 'pet.jpg', { type: 'image/jpeg' })
       formData.append('file', f)
       const res = await fetch('/api/pets/upload', { method: 'POST', body: formData })
       const data = await res.json()
