@@ -39,17 +39,50 @@ Menos urgente pero misma historia: Brevo, DataForSEO, refresh tokens de Google A
 el crontab, en otro proyecto. Quien tiene el topic puede leer y publicar alertas falsas.
 Ya existe `/etc/ntfy-topics.env` (0600) para apuntar.
 
+## PRIORITY 1 — Infra nueva (2026-09-06, SESSION 011 §6-8)
+
+### [ ] Vercel: cuenta en plan `hobby` con 5 proyectos, 3 con AdSense
+Sus docs: "Hobby teams are restricted to non-commercial personal use only". Proyectos:
+`missloulocal`, `truly-free-qr`, `truly-free-pdf-tools`, `truly-free-mortgage-calculator`,
+`we-the-people-39120`. Riesgo de suspensión **sin los 30 días de gracia que dio Supabase**, y
+caen los 5 juntos. Opciones: Vercel Pro $20/mo, o migrar al VPS (hay lugar de sobra).
+
+### [ ] `we-the-people-39120` — RLS APAGADO en tabla pública (decidiste: está vivo, arreglar)
+Proyecto Supabase `fpasmbblciofpbcyfvrk`. Cualquiera con la URL lee, edita y borra. Te llega el
+mail semanal desde junio. **Necesito de vos:** qué tablas son y quién las lee (anon key desde el
+browser, o solo server con service role). Con eso te armo el SQL de policies para correr en el
+dashboard. No tengo credenciales de ese proyecto.
+
+### [ ] Supabase: decidir Pro o migración antes del 2026-10-06
+El egress bajó ~95% hoy, pero la org sigue sin colchón. **Falta saber qué proyectos hay en la
+org `nfmjsbasjcldoqdfqchk`** — no puedo listarla: no hay `SUPABASE_ACCESS_TOKEN` en
+`~/.claude_env.sh` (de hecho no hay NINGUNA var `SUPABASE_*` ahí, viven solo en el `.env.local`
+del proyecto — contra REGLA GLOBAL #11).
+
+### [ ] 14 objetos huérfanos en el bucket `pet-photos`
+Sin referencia en ninguna tabla. No los convertí ni borré. Cuestan storage, no egress.
+Decís y los borro.
+
 ## PRIORITY 0 — Premium Listings Sales (Revenue activo)
 
-### [ ] John Grady — The Nest (505 Franklin St, Natchez)
-- Listing live en premium: missloulocal.com/business/nest
+### [ ] John Grady — The Nest (505 Franklin St, Natchez) — REACTIVACIÓN, no venta fría
+- **Ex-cliente en stand-by por impago.** Dejaron de pagar, servicio suspendido, no se borra
+  porque pueden volver. En DB está `tier: free` — correcto, no es bug
+- Dominio `natcheznest.com` sigue en la cuenta de Cloudflare
+- Duplicado a limpiar algún día: `H. Hal Garner at Nest`, mismo teléfono y dirección
+- Sin email en DB. Solo teléfono (601) 446-3011
 - Pitch link #1 (contraste visual): missloulocal.com/category/shopping-retail
 - Pitch link #2 (su listing completo): missloulocal.com/business/nest
 - Oferta: $67/mo → website + GBP optimizado + Premium Listing en MissLouLocal
 - Contacto: John Grady (dueño)
 
-### [ ] Cierre pendiente — premium listings existentes
-- Little Easy Tours, Timothy Blalock, River City Diesel → confirmar si están pagando o son cortesía
+### [x] Cierre pendiente — premium listings existentes — RESUELTO 2026-09-06
+- Little Easy Tours, Timothy Blalock, River City Diesel = **cortesía, confirmado 2 vías**
+  (`stripe_customer_id` vacío en Supabase + cero subs de MLL en Stripe). Little Easy Tours paga
+  $300/mo pero es Google Ads Management, otro producto. **MissLouLocal factura $0**
+- Links de Stripe de Southern Lawns: 3 desactivados + 3 productos archivados (nunca pagaron).
+  **Falta crear un producto/link genérico "MissLouLocal — Website Setup" $67** — el viejo
+  mostraba "Southern Lawns" a todos los prospectos y tuvo 3 checkouts abandonados por eso
 - River City Diesel: no tiene website — candidato para $67/mo package
 
 ---
@@ -59,7 +92,6 @@ Ya existe `/etc/ntfy-topics.env` (0600) para apuntar.
 ### [ ] Esperar respuestas — 14 emails enviados
 | Business | Email | Enviado | Estado |
 |----------|-------|---------|--------|
-| Southern Lawns LLC | misslousouthernlawns@gmail.com | ~2026-05 | Awaiting $67 |
 | Bloomsbury Larder | lesliestamp@outlook.com | ~2026-05 | No response |
 | TDF Tree Service | tdftreeservice@yahoo.com | ~2026-05 | No response |
 | EmberShield Chimney | embershieldchimney@gmail.com | ~2026-05 | No response |
