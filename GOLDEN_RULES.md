@@ -127,3 +127,23 @@
 - La cadencia vive en el SCRIPT (gate de días desde `last_published`), no en el crontab.
   Cron diario + gate de 7 días > cron semanal: un fallo reintenta mañana, no la semana que viene
 - Todo cron que publique/genere contenido debe mandar email en su path de FATAL
+
+## IMÁGENES / EGRESS (aprendido 2026-09-06)
+- **NUNCA** subir el original de cámara al Storage. Downscale a 900px + WebP en el browser
+  antes del upload (`src/lib/downscaleImage.ts`). Un PNG de 2.8 MB para una card de 120px
+  fue lo que voló el quota de Supabase
+- Supabase **ignora el `cacheControl` del upload** en free: lo guarda en la metadata y sirve
+  `cache-control: no-cache` igual, en el endpoint público y en el autenticado. Probado con las
+  3 variantes (header `Cache-Control`, header `cache-control: max-age=N`, campo multipart).
+  Sin cache => cada visita re-baja el archivo entero. El único control real es el TAMAÑO
+- Al convertir: subir el `.webp` como objeto NUEVO y repuntar la DB. **No borrar el original**
+  — el rollback es revertir la DB, sin pérdida
+- **La home es estática** (no tiene `revalidate` ni `dynamic`): cambiar la DB no se ve hasta
+  disparar el deploy hook. Aplica también a listings premium nuevos y al contador
+
+## PLATAFORMA / ToS
+- La cuenta de Vercel es **`hobby`** y sus docs dicen "restricted to non-commercial personal
+  use only". Cuelgan 5 proyectos, incluidos los AdSense (`truly-free-*`) que son comercial sin
+  discusión. Riesgo de suspensión sin aviso — más urgente que el quota de Supabase
+- Acoplamiento real de MLL a Supabase: 0 Auth, 0 Realtime, 0 RPC, 4 llamadas de Storage,
+  67 `.from()`. Migrar = mover PostgREST, no reescribir la app
