@@ -65,6 +65,50 @@ GitHub secret scanning bloqueó 2 pushes -> había 2 tokens en texto plano.
 
 ---
 
+### 5. Secretos fuera del crontab + índice global de credenciales
+**Hallazgo:** 32 líneas del crontab de root tenían 14 credenciales **inline en texto plano**
+— Groq, `CF_GLOBAL_API_KEY`, refresh tokens de Google Ads y GSC, Brevo, DataForSEO y los 2
+topics de ntfy. Cron corre cada job como `/bin/sh -c "<comando>"`, así que ese argv es
+legible por `ps aux` para cualquier usuario local mientras el job corre. Usuarios con shell
+en la caja: `ubuntu`, `openclaw`, `postgres`, `rkrsms`.
+
+- **Migrado a env files 0600:** `/etc/blog-secrets.env` (clave Groq de blogs) y
+  `/etc/ntfy-topics.env` (`NTFY_TOPIC_REPORTS` + `NTFY_TOPIC_ALERTS`). Las otras 12 vars ya
+  existían idénticas en `/etc/rkr-secrets.env` → se sourcea y se exportan solo esas.
+- **Precedencia preservada:** las 11 líneas de blog sourcean `rkr-secrets.env` y **pisan**
+  `GROQ_API_KEY` con otra clave distinta (`83124f` vs `6af3be`). El override sigue
+  existiendo — `blog-secrets.env` se sourcea DESPUÉS. La línea 137, que no es de blog,
+  sigue recibiendo la clave de `rkr-secrets` como antes.
+- **Conectores preservados** (`&&` vs `;`) para no cambiar semántica de fallo.
+- **Verificado, no asumido:** `verify_cron_env.py` evalúa el prefijo de entorno viejo y el
+  nuevo en `sh` y compara var por var lo que recibe el proceso hijo. **32/32 idénticas,
+  0 problemas.** La parte del programa quedó byte-idéntica en las 32 líneas.
+- Re-auditado: **cero literales** quedan en el crontab. 146 líneas antes y después.
+- Backup: `/root/crontab.bak-secrets-20260906-190859` (0600).
+- **`/home/missloulocal-crons/.env` estaba en 0644** — `GITHUB_TOKEN`,
+  `SUPABASE_SERVICE_ROLE_KEY`, `CF_GLOBAL_API_KEY` legibles por todo el box, siempre, no
+  solo durante un cron. Pasado a 0600 junto con su `.bak`. Verificado que el cron lo lee.
+
+**Índice global de credenciales (a pedido de George).** George planteó que en múltiples
+proyectos Claude dice "no tengo credenciales" para Cloudflare/GSC, él tiene que recordarle
+dónde buscar, y recién ahí aparecen. Propuso unificar todo en un `.env` global.
+**Diagnóstico real:** `~/.claude_env.sh` YA es ese archivo, y el CLAUDE.md global ya lo
+apunta — verificado que las 4 de Cloudflare, los 12 `CF_ZONE_*` y las 3 de `GSC_OAUTH_*`
+estaban ahí todo el tiempo. No es problema de ubicación sino de descubrimiento: un archivo
+nuevo tendría el mismo destino. **Fix:** hook SessionStart global
+`~/.claude/scripts/creds_index.py` que imprime en toda sesión de todo proyecto un índice de
+las 109 credenciales agrupadas por servicio — **nombres sí, valores no** (un hook que
+imprima valores los mete en cada transcript de cada proyecto para siempre). 2.5KB, 23 líneas.
+Registrado en `~/.claude/settings.json`. Reglas globales **#11** (credenciales) y **#12**
+(secretos nunca inline en crontab) agregadas al CLAUDE.md global.
+
+**Barrido de lo que queda expuesto (NO tocado, ver PENDING):** 643 archivos legibles por
+otros usuarios contienen algún secreto de alta sensibilidad. Dos focos: `/opt/rkr-backup-repo/`
+(755, ~20 scripts de Rank & Rent con los ntfy topics hardcodeados) y `/var/www/lead_tracker/`
+(660/664, `TELNYX_API_KEY` y `TWILIO_AUTH_TOKEN` en `leads.json`, `send_lead.py` y ~16
+backups de `contractors.json`). No les cambié permisos: son de otro proyecto y si un server
+web corre como `www-data` y los lee, un `chmod 600` los rompe. Necesita diagnóstico primero.
+
 ### Bugs hit while building (both fixed, then backstopped)
 - `grep -E` cannot parse `(?:` non-capturing groups — errored, returned 0 hits, guard
   printed "OK — no dead pins" while 4 crons were down. Scan rewritten in pure Python.
