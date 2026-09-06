@@ -21,6 +21,24 @@ Ambos estuvieron muertos los mismos 3 viernes por el modelo Groq retirado. Ya re
 `openai/gpt-oss-120b`. **No los corrí manualmente** — publican en sitios de otros proyectos.
 Verificar después de su próximo cron programado.
 
+### [ ] Rotar `CF_GLOBAL_API_KEY` (cuando puedas, no urgente)
+Estuvo inline en el crontab meses → legible vía `ps aux` por cualquier usuario local del VPS
+mientras corría el cron mensual. Ya migrada a `/etc/rkr-secrets.env` (0600), pero la clave en
+sí sigue siendo la misma. Es la única credencial del stack **sin scope** — da acceso total a
+la cuenta Cloudflare y no se puede limitar. Al rotarla hay que actualizar `/etc/rkr-secrets.env`,
+`/home/missloulocal-crons/.env` y `~/.claude_env.sh`.
+Menos urgente pero misma historia: Brevo, DataForSEO, refresh tokens de Google Ads/GSC.
+
+### [ ] `/var/www/lead_tracker/` — secretos legibles por otros usuarios (Rank & Rent)
+`TELNYX_API_KEY` y `TWILIO_AUTH_TOKEN` en texto plano en `leads.json`, `send_lead.py` (775) y
+~16 backups de `contractors.json` (660). **No cambié permisos**: si un server web corre como
+`www-data` y los lee, un `chmod 600` rompe el lead router. Necesita saber quién los lee primero.
+
+### [ ] `/opt/rkr-backup-repo/` — ntfy topics hardcodeados (Rank & Rent)
+~20 scripts en 755 con `NTFY_TOPIC_REPORTS`/`ALERTS` literales. Mismo patrón que se arregló en
+el crontab, en otro proyecto. Quien tiene el topic puede leer y publicar alertas falsas.
+Ya existe `/etc/ntfy-topics.env` (0600) para apuntar.
+
 ## PRIORITY 0 — Premium Listings Sales (Revenue activo)
 
 ### [ ] John Grady — The Nest (505 Franklin St, Natchez)
