@@ -20,6 +20,9 @@ export async function GET() {
     .eq('is_active', true)
     .order('tier', { ascending: false })
     .order('name')
+    // PostgREST corta en 1000 por defecto: con 1135 activos, /near-me venia
+    // ciego a 135 negocios sin dar error.
+    .range(0, 4999)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
