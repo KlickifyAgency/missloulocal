@@ -14,17 +14,25 @@ export async function GET() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
 
-  const { data, error } = await supabase
-    .from('businesses')
-    .select(FIELDS)
-    .eq('is_active', true)
-    .order('tier', { ascending: false })
-    .order('name')
-    // PostgREST corta en 1000 por defecto: con 1135 activos, /near-me venia
-    // ciego a 135 negocios sin dar error.
-    .range(0, 4999)
+  // Supabase impone max-rows=1000 del lado servidor: ni .limit() ni .range()
+  // lo superan. Con 1135 activos, /near-me venia ciego a 135 negocios en
+  // silencio, asi que hay que paginar de verdad.
+  const PAGE = 1000
+  const data: any[] = []
+  for (let from = 0; ; from += PAGE) {
+    const { data: page, error } = await supabase
+      .from('businesses')
+      .select(FIELDS)
+      .eq('is_active', true)
+      .order('tier', { ascending: false })
+      .order('name')
+      .range(from, from + PAGE - 1)
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    if (!page || page.length === 0) break
+    data.push(...page)
+    if (page.length < PAGE) break
+  }
 
   const businesses = (data ?? []).map((b: any) => ({
     ...b,
