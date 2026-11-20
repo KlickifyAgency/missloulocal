@@ -6,6 +6,8 @@ import RegisterSW from '@/components/pwa/RegisterSW'
 import PushNotifications from '@/components/pwa/PushNotifications'
 import { Analytics } from '@vercel/analytics/react'
 import { GoogleAnalytics } from '@next/third-parties/google'
+import Script from 'next/script'
+import LegalLinks from '@/components/layout/LegalLinks'
 
 const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-sans', weight: ['400', '500', '600', '700', '800'] })
 const dmSerifDisplay = DM_Serif_Display({ subsets: ['latin'], weight: '400', variable: '--font-display' })
@@ -40,11 +42,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
       <body className={`${dmSans.variable} ${dmSerifDisplay.variable}`} style={{ margin: 0, padding: 0, fontFamily: 'var(--font-sans)', backgroundColor: '#f8fafc' }}>
         {children}
+        <LegalLinks />
         <InstallBanner />
         <RegisterSW />
         <PushNotifications />
         <Analytics />
         <GoogleAnalytics gaId="G-X98NNEKHKV" />
+        <Script src='/cookie_banner.js' strategy='afterInteractive' />
       </body>
     </html>
   )

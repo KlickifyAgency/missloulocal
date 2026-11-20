@@ -46,3 +46,11 @@ input, select, textarea {
 .safe-top {
   padding-top: env(safe-area-inset-top);
 }
+
+/* legal-kit: cookie banner sits above BottomNav; legal page typography */
+:root { --lk-bottom: 72px; }
+.legal-body h1 { font-size: 24px; color: #0f172a; margin: 0 0 8px; }
+.legal-body h2 { font-size: 17px; color: #0f172a; margin: 24px 0 8px; }
+.legal-body table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.legal-body td, .legal-body th { border: 1px solid #e2e8f0; padding: 8px; text-align: left; vertical-align: top; }
+.legal-body a { color: #1e40af; }
